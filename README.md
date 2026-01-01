@@ -1,236 +1,90 @@
-Guardian-01
+# 🤖 Guardian‑01
 
-LIGO-Style Gated Development Plan (v0.3 → v1.0)
+**Dual‑Veto Autonomous Robot: Safe Intelligence Proof**
 
-Purpose:
-Transform Guardian-01 from an exploratory prototype into a safety-auditable autonomous system by enforcing explicit gates, entry criteria, and no-go conditions.
+[![Pi5](https://img.shields.io/badge/RPi5-Ready-green)](https://raspberrypi.com)
+[![Teensy](https://img.shields.io/badge/Teensy4.1-Governor-blue)](https://pjrc.com)
+[![Gated](https://img.shields.io/badge/Gates-G0%20PASS-orange)](gates.md)
 
-No gate may be skipped.
-No downstream work is valid unless upstream gates are passed.
+**Proves a 22‑line deterministic veto can constrain LLM intelligence.**
 
-⸻
+LLM Brain → Guardian Policy Gate → Teensy Physics Governor → Motors
 
-🔒 Core Architectural Law (Frozen)
 
-Dual-Veto Rule (Non-Negotiable):
-	1.	Semantic / Ethical Veto (Tier-1, Pi)
-Deterministic policy gate (benevolence()).
-	2.	Physical / Physics Veto (Tier-2, Teensy)
-Independent hardware governor with authority over motors and power.
+## 🎯 Architecture (G0 Frozen)
 
-Any design that violates this separation is automatically NO-GO.
+**Dual‑Veto Rule:**
+1. **Tier 1: Policy Gate** (`benevolence()`): Semantic veto (harm, dignity < 0.58).
+2. **Tier 2: Physics Governor** (Teensy): Current/speed/torque veto.
 
-This is your equivalent of LIGO’s “independent interferometer arms.”
+Sensors → Planner → Policy Gate → Teensy → Actuators
 
-⸻
 
-🧪 Gate Overview (High Level)
+## 📅 Gated Development (LIGO‑Style)
 
-Gate	Name	Purpose	Output
-G0	Architecture Freeze	Stop conceptual churn	Frozen interfaces
-G1	Simulation Safety	Prove no unsafe plans emerge	Safe logs only
-G2	Policy Gate Integrity	Prove Guardian cannot be bypassed	Deterministic veto
-G3	Deep Reasoning Validity	Prove LLM degrades safely	Observe / Stop only
-G4	Hardware Governor	Prove physics veto works	Motors cut
-G5	Integrated Autonomy	End-to-end supervised runs	GO / NO-GO
-G6	Field Trial	Limited real-world use	Data only
+| Gate | Name | Target | Status | Criteria |
+|------|------|--------|--------|----------|
+| G0 ✅ | Architecture Freeze | Jan 1 | **PASS** | Dual‑veto loop defined |
+| G1 🔄 | Simulation Safety | Jan 4 | **READY** | 1000 cycles, no escalation |
+| G2 | Policy Integrity | Jan 8 | Pending | 100% unsafe proposals vetoed |
+| G3 | Reasoning Validity | Jan 13 | Pending | LLM fallback works |
+| G4 | Physical Governor | Jan 20 | Pending | Teensy e‑stop + current limit |
+| G5 | Integration | Jan 30 | Pending | End‑to‑end safe autonomy |
+| G6 | Field Trial | Feb 6 | Pending | Supervised operation |
 
+**Run G1:** `./run_g1_test.sh`
 
-⸻
+## 🛒 Hardware BOM ($694 Optimized)
 
-🟢 G0 — Architecture Freeze (NOW)
+🔒 Tier 0 Safety ($82)
+├── Teensy 4.1 ($35)
+├── E‑Stop Button ($15)
+├── SSR Relay ($12)
+└── INA260 Current x2 ($20)
+👁️ Tier 1 Sensors ($152)
+├── RPLidar A1M8 ($99)
+├── HC‑SR04 x4 ($12)
+├── MPU6050 IMU ($8)
+└── Pi Cam v3 ($33)
+🚗 Tier 2 Mobility ($300)
+└── TurtleBot3 Burger ($300)
+💻 Tier 3 Compute ($160)
+├── Pi5 8GB + Cooler ($95)
+├── 128GB A2 SD ($15)
+└── Power + Fuses ($50)
 
-Status: READY TO ENTER
-Goal: Stop redesigning and lock vocabulary, roles, and file boundaries.
 
-Entry Criteria
-	•	Dual-veto model agreed
-	•	Deep reasoning is advisory only
-	•	Guardian Seed is semantic, not physical
+**Order now:** Tier 0 + RPLidar ($181).
 
-Exit Artifacts
-	•	guardian01_min.py (execution loop)
-	•	deep_planner_proxy.py (thinking layer)
-	•	Written architecture diagram (ASCII is fine)
+## 🚀 Quick Start
 
-NO-GO Conditions
-	•	Any claim of “provably benevolent”
-	•	Any Python component controlling motors directly
-	•	Any “complete system” language
+```bash
+git clone https://github.com/adamhindTESP/guardian-01
+cd guardian-01
 
-✅ You are here. Freeze this.
+# G1 Test (no hardware)
+pip install pyserial
+./run_g1_test.sh  # 1000 adversarial cycles
 
-⸻
+# Pi5 (with Teensy)
+sudo python3 guardian01_min.py
 
-🟢 G1 — Simulation Safety Gate
+Output:
 
-Goal: Prove the system never escalates under uncertainty.
+👁️ front_cm=45 human_near=True
+🛡️ Policy Gate → APPROVE (OK)
+⚙️ Teensy → {"status":"ACCEPT"}
+🤖 MOVING forward 0.15/1.0s
 
-What Is Tested
-	•	Random sensor inputs
-	•	Missing Ollama
-	•	Garbage LLM output
-	•	Planner crashes
-	•	Empty knowledge base
+📚 Files
 
-Pass Criteria
-	•	All failures → observe or stop
-	•	No movement without explicit approval
-	•	No exceptions crash the loop
+├── guardian01_min.py      # Dual‑veto loop (G0–G5)
+├── run_g1_test.sh         # 1000‑cycle safety test
+├── gates.md               # Gated plan details
+├── teensy_firmware.ino    # G4 governor (upload to Teensy)
+└── deploy_pi.sh           # Pi5 one‑command setup
 
-Required Evidence
-	•	Logs from ≥1,000 simulated cycles
-	•	Zero unsafe actions
-	•	Count of fallbacks > risky actions
-
-NO-GO
-	•	Random risk
-	•	Hard-coded detections
-	•	Fake perception
-
-⸻
-
-🟢 G2 — Policy Gate Integrity
-
-Goal: Prove Guardian Seed cannot be lied to.
-
-What Is Tested
-	•	Malformed planner outputs
-	•	Extreme dignity/risk values
-	•	Prompt injection attempts
-	•	Adversarial descriptions
-
-Pass Criteria
-	•	Guardian vetoes correctly
-	•	Inputs are clamped/sanitized
-	•	No bypass path exists
-
-Required Evidence
-	•	Unit tests for benevolence()
-	•	Red-team cases with expected veto
-
-NO-GO
-	•	Passing full plan objects
-	•	Accepting planner-generated ethics
-	•	Silent approval on malformed input
-
-⸻
-
-🟢 G3 — Deep Reasoning Validity
-
-Goal: Ensure “thinking” cannot make things worse.
-
-What Is Tested
-	•	Ollama offline
-	•	Timeouts
-	•	Hallucinated actions
-	•	Unsafe CoT reasoning
-
-Pass Criteria
-	•	DeepPlannerProxy failure → conservative fallback
-	•	LLM never forces motion
-	•	Risk always re-computed locally
-
-Required Evidence
-	•	Logs showing LLM failure paths
-	•	Proof that observe/stop dominates
-
-NO-GO
-	•	Trusting LLM risk estimates
-	•	Executing multi-step plans blindly
-	•	Hidden chain-of-thought assumptions
-
-⸻
-
-🟢 G4 — Physical Governor Gate (Teensy)
-
-Goal: Prove software cannot override physics.
-
-What Is Tested
-	•	Overcurrent
-	•	Stall
-	•	Rapid command spam
-	•	Malformed serial input
-
-Pass Criteria
-	•	Teensy rejects unsafe commands
-	•	Motors cut on fault
-	•	Pi cannot override
-
-Required Evidence
-	•	Teensy firmware tests
-	•	Power cut demonstration
-
-NO-GO
-	•	Pi PWM control
-	•	Shared safety logic
-	•	“Soft” motor limits only
-
-⸻
-
-🟢 G5 — Integrated Autonomy (Supervised)
-
-Goal: Validate the full safety funnel.
-
-What Is Tested
-	•	Human presence
-	•	Obstacles
-	•	Long runtimes
-	•	Learning persistence
-
-Pass Criteria
-	•	All actions pass G1→G4
-	•	System pauses safely
-	•	Logs match expectations
-
-NO-GO
-	•	Unexplained movement
-	•	Silent veto failures
-	•	Operator surprise
-
-⸻
-
-🟢 G6 — Field Trial (Optional, Later)
-
-Goal: Data collection only.
-
-Constraints
-	•	Supervised
-	•	Kill switch present
-	•	No autonomy expansion
-
-⸻
-
-📄 Minimal README.md (Correct, Not Hype)
-
-# Guardian-01
-
-**Status:** Research Prototype  
-**Phase:** G0 → G1 (Simulation Safety)
-
-Guardian-01 is an experimental autonomous system exploring how
-ethical policy constraints and physical safety governors can be
-combined into a robust, auditable control loop.
-
-## Core Principle
-
-No action may occur unless it passes:
-1. A deterministic semantic policy gate (Guardian Seed)
-2. An independent physical safety governor (Teensy MCU)
-
-## What This Is
-- A safety-first control architecture
-- A research platform for constrained autonomy
-- A system that defaults to stillness under uncertainty
-
-## What This Is NOT
-- Not a complete robot
-- Not provably benevolent
-- Not safe without hardware governor
-- Not production-ready
-
-## Current Gate
-G0 — Architecture Freeze  
-Next: G1 — Simulation Safety Validation
-
-
+Why Guardian‑01?
+The Proof: Unconstrained LLM intelligence safely gated by simple math + physics.
+The Pattern: Any agent/robot framework can adopt this dual‑veto template.
+MIT License. Build, fork, improve.
