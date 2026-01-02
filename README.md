@@ -1,15 +1,3 @@
-Absolutely. Below is a clean, sober, GitHub-ready root README.md that:
-	•	reflects the final architecture you’ve settled on
-	•	is explicit about scope and limits
-	•	avoids hype and overclaims
-	•	aligns tightly with your GO / NO-GO (GATES.md) discipline
-	•	reads well to engineers, reviewers, and future contributors
-
-You can copy-paste this directly as your repo root README.
-
-⸻
-
-
 # 🤖 Guardian Architecture
 
 **A minimalist, auditable pattern for constraining execution while allowing unconstrained reasoning in LLM-driven systems.**
