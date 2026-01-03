@@ -1,176 +1,204 @@
-# 🤖 Guardian Architecture
+Perfect timing. What you have is conceptually excellent, but it’s now out of date with your actual achievement. You’ve earned the right to tighten this into a post-G3.5, audit-grade README.
 
-**A minimalist, auditable pattern for constraining execution while allowing unconstrained reasoning in LLM-driven systems.**
+Below is a fully rewritten root README.md, aligned exactly with:
+	•	your passed tests
+	•	your GATES.md
+	•	your non-overclaim discipline
+	•	your philosophy of structural safety
 
----
+This version is defensible, conservative, and credible to engineers, reviewers, and skeptics.
 
-## Overview
-
-The Guardian Architecture addresses a practical problem in modern AI systems:
-
-> **How can we allow large language models (LLMs) to reason freely without granting them uncontrolled authority to act?**
-
-Rather than attempting to “align” intelligence itself, this project enforces safety **structurally**, by separating *untrusted reasoning* from *constrained execution* using deterministic veto layers.
-
-This repository provides:
-- a **frozen semantic policy gate** (`guardian-seed`)
-- a **validated execution pipeline** for LLM-driven robotics
-- a **gated development framework** (GO / NO-GO) to prevent overclaiming
-
-The focus is **current-generation, cooperative LLM systems** operating in narrow physical or software domains.  
-This is **not** a solution to adversarial superintelligence.
-
----
-
-## Core Principle: The Dual-Veto Rule
-
-**No action is executed unless it passes two independent veto authorities.**
-
-| Tier | Authority | Role | Nature |
-|-----:|----------|------|--------|
-| Tier 1 | Semantic Policy Gate | Deterministic approval / veto of proposed intent | Small, auditable code |
-| Tier 2 | Physical / External Governor | Enforces real-world limits (physics, rate, power, API bounds) | Independent, non-bypassable |
-
-This separation ensures that intelligence can scale **without weakening safety**.
-
----
-
-## Reference Architecture
-
-LLM (Untrusted Reasoning)
-↓  (Structured JSON only)
-Independent Validator (Trusted)
-↓  (Independent metrics, no self-reports)
-Semantic Policy Gate (guardian-seed)
-↓  (Approve / Veto only)
-Deterministic Safe Planner
-↓
-Physical / External Governor (e.g. Teensy MCU)
-↓
-Execution
-
-### Key Properties
-
-- **LLMs never control actuators directly**
-- **No free text enters the safety-critical path**
-- **Risk and dignity metrics are computed independently**
-- **Hardware or external governors always have final authority**
-
----
-
-## What This Project Does (and Does Not Do)
-
-### ✔ What It Does
-
-- Eliminates **linguistic deception** from the safety path
-- Rejects **self-reported safety metrics**
-- Enforces **numeric bounds and schemas**
-- Defaults to **conservative fallback** on any failure
-- Provides a **reference implementation** for safe LLM-robot integration
-- Defines **explicit gates** for what claims are allowed
-
-### ✖ What It Does Not Do
-
-- Does **not** solve adversarial superintelligence alignment
-- Does **not** detect all long-horizon or strategic deception
-- Does **not** claim provable benevolence or global safety
-- Does **not** replace industrial safety certification
-
-All claims are bounded by the gates defined in `GATES.md`.
-
----
-
-## Repository Structure
-
-.
-├── guardian_seed/          # Frozen semantic policy gate (Tier 1)
-├── validator_module.py     # Independent structured-intent validator
-├── trajectory_planner.py  # Deterministic safe planner (G3 target)
-├── teensy_firmware/        # Physical governor reference (Tier 2)
-├── GATES.md                # GO / NO-GO compliance contract
-├── run_g1_test.sh          # G1 adversarial simulation runner
-└── examples/               # Minimal non-robot use cases (planned)
-
----
-
-## Gated Development Model
-
-This project uses a **GO / NO-GO gate system** to prevent scope creep and overclaiming.
-
-| Gate | Focus | Meaning |
-|-----:|------|--------|
-| G0 | Architecture Freeze | Dual-veto law and interfaces are locked |
-| G1 | Simulation Safety | No unsafe execution under adversarial inputs |
-| G2 | Policy Gate Integrity | Semantic veto is deterministic and auditable |
-| G3 | Trajectory / Pattern Safety | Physics-based execution constraints |
-| G4 | Physical Governor | Independent hardware authority |
-| G5 | Integrated Autonomy | Sustained safe operation in real world |
-
-**No system may claim a higher level of safety than the highest gate it has passed.**
-
-See `GATES.md` for exact entry and exit criteria.
-
----
-
-## Threat Model (Explicit)
-
-**In scope**
-- Current-generation LLMs (2024–2026)
-- Cooperative or non-malicious models
-- Narrow physical or software domains
-- Accidental errors, hallucinations, mis-specification
-
-**Out of scope**
-- Adversarial superintelligence
-- Zero-day parser exploits
-- Nation-state or malware threat models
-- Formal proofs of alignment
-
-This clarity is intentional.
-
----
-
-## Why This Exists
-
-Most AI “safety” systems rely on:
-- training-time refusals
-- output filtering
-- post-hoc monitoring
-
-These approaches fail once an LLM is allowed to **act**.
-
-The Guardian Architecture instead constrains **where authority lives**:
-- LLMs may reason freely
-- execution is structurally bounded
-- safety is enforced *before* action, not after
-
-This repository exists to demonstrate that pattern clearly and honestly.
-
----
-
-## License
-
-MIT License.  
-Use, adapt, fork, and extend — **but respect the gates**.
-
----
-
-## Status
-
-- Architecture: **Frozen (G0 PASS)**
-- Simulation safety: **In progress (G1)**
-- Hardware reference: **Prototype**
-
----
-
-**Maximum service through restraint.**
-
+You can replace your README with this verbatim.
 
 ⸻
 
-If you want, next we can:
-	•	tighten GATES.md language so it exactly matches this README
-	•	produce a one-page “Architecture Spec” PDF
-	•	or trim this into a paper-style abstract + diagram
+🤖 Guardian Architecture
 
-But as a GitHub root README: this is clean, honest, and defensible.
+A verifiable, gate-based architecture for constraining execution while permitting unconstrained reasoning in LLM-driven systems.
+
+⸻
+
+Overview
+
+Modern AI systems increasingly rely on large language models (LLMs) to reason, plan, and generate actions.
+The central safety problem is not reasoning quality, but authority over execution.
+
+How do we allow LLMs to reason freely without allowing them to act unsafely?
+
+The Guardian Architecture answers this by enforcing safety structurally, not behaviorally.
+
+Instead of attempting to “align” intelligence itself, Guardian:
+	•	treats LLMs as untrusted reasoning engines
+	•	enforces execution through deterministic, auditable veto gates
+	•	guarantees that no action executes unless all safety authorities approve
+
+This repository provides a fully tested, software-complete safety stack (G1–G3.5) suitable for integration with physical or external systems.
+
+⸻
+
+Core Principle: Structural Separation of Authority
+
+Reasoning is not authority.
+Execution is never delegated to the LLM.
+
+Guardian enforces a dual-veto (multi-gate) rule:
+
+Any veto → no execution.
+All gates pass → execution permitted.
+
+⸻
+
+Reference Architecture (G3.5 Certified)
+
+LLM (Untrusted Reasoning)
+   ↓  (Structured JSON only)
+G1 — Validator
+   ↓
+G2 — Deterministic Policy Kernel
+   ↓
+G3 — Deterministic Trajectory / Temporal Safety
+   ↓
+G3.5 — Safety Coordinator (Single Authority API)
+   ↓
+[ FINAL_PASS | VETO ]
+   ↓
+G4 — Hardware / External Governor (future)
+
+Key Properties
+	•	LLMs never control actuators or APIs directly
+	•	Free-text never enters the safety-critical path
+	•	All risk metrics are independently computed
+	•	All decisions produce a complete audit record
+	•	Conservative vetoes are explicitly allowed
+	•	Failure modes default to NO-GO
+
+⸻
+
+What This Repository Provides
+
+✅ What It Does
+	•	A complete, tested software safety stack (G1–G3.5)
+	•	Deterministic semantic policy enforcement
+	•	Deterministic trajectory & temporal safety checks
+	•	A single authoritative check_proposal() interface
+	•	End-to-end auditability for every decision
+	•	A GO / NO-GO gate model that strictly limits claims
+
+❌ What It Does Not Claim
+	•	No solution to adversarial superintelligence
+	•	No long-horizon intent inference
+	•	No guarantees beyond verified gates
+	•	No replacement for industrial safety certification
+	•	No claims of real-world physical safety (yet)
+
+All claims are explicitly bounded by GATES.md.
+
+⸻
+
+Certification Status (Current)
+
+Highest Passed Gate: G3.5 — Software Safety Stack Complete
+
+Verified Evidence:
+	•	21 / 21 tests passing
+	•	0 unsafe escapes
+	•	Deterministic behavior
+	•	Complete audit trail for every decision
+
+The system is software-complete and hardware-ready.
+
+⸻
+
+Gated Development Model
+
+Guardian advances only through explicit safety gates:
+
+Gate	Scope	Status
+G0	Architecture freeze	✅ PASS
+G1	Simulation safety	✅ PASS
+G2	Policy kernel	✅ PASS
+G3	Trajectory & temporal safety	✅ PASS
+G3.5	Full software integration	✅ PASS
+G4	Hardware governor	⏳ NEXT
+G5	Field-integrated autonomy	⏳ FUTURE
+
+No system may claim safety beyond its highest verified gate.
+
+Full criteria and evidence live in GATES.md￼.
+
+⸻
+
+Repository Structure (Authoritative)
+
+guardian_seed/
+├── README.md                     # This document
+├── GATES.md                      # Certification authority
+├── THREAT_model.md               # Explicit threat boundaries
+├── validator_module.py           # G1 — structured intent validation
+├── guardian_seed.py              # G2 — deterministic policy kernel
+├── trajectory_planner.py         # G3 — trajectory & temporal safety
+├── safety_coordinator.py         # G3.5 — unified decision authority
+├── test_g3_trajectory_safety.py  # G3 certification tests (11)
+├── test_safety_coordinator.py    # G3.5 certification tests (10)
+└── tests_optional/               # Exploratory / non-certifying tests
+
+Files outside this core do not participate in certification.
+
+⸻
+
+Threat Model (Explicit and Conservative)
+
+In Scope
+	•	Current-generation LLMs (2024–2026)
+	•	Cooperative or non-malicious models
+	•	Narrow physical or software domains
+	•	Hallucination, mis-specification, repetition, and error
+
+Out of Scope
+	•	Adversarial superintelligence
+	•	Parser exploits / malware
+	•	Nation-state threat models
+	•	Formal alignment proofs
+
+This clarity is intentional and non-negotiable.
+
+⸻
+
+Why This Exists
+
+Most AI safety approaches rely on:
+	•	training-time refusals
+	•	output filtering
+	•	post-hoc monitoring
+
+These fail once an LLM is allowed to act.
+
+Guardian instead constrains where authority lives:
+	•	LLMs reason
+	•	gates decide
+	•	execution obeys structure, not persuasion
+
+This repository exists to demonstrate that pattern, honestly and reproducibly.
+
+⸻
+
+License
+
+MIT License.
+
+You are free to use, fork, and extend this work —
+provided you respect the gates and do not overclaim.
+
+⸻
+
+Current Status
+	•	Software safety stack: COMPLETE (G3.5)
+	•	Hardware enforcement: NEXT (G4)
+	•	Claims limited to verified evidence
+
+⸻
+
+Maximum capability through minimum authority.
+Maximum service through restraint.
+
+⸻
