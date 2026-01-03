@@ -58,6 +58,11 @@ Key Properties
 	•	Conservative vetoes are explicitly allowed
 	•	Failure modes default to NO-GO
 
+Schema-Locked Execution Interface
+	•	All LLM outputs must conform to a fixed, versioned action schema
+	•	Only whitelisted actions with bounded parameters are permitted
+	•	Invalid structure, missing fields, or sequencing violations are vetoed before policy evaluation
+	•	Safety reduces to: “Does this JSON pass the validator?”
 ⸻
 
 What This Repository Provides
