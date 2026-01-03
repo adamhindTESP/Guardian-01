@@ -592,3 +592,329 @@
     }
   ]
 }
+
+{
+  "chunk_id": "A3",
+  "schema_version": "guardian01_train_v1",
+  "notes": {
+    "policy": "Safety-first demonstrations. No free-text reasoning. Enforce hard limits: speed<=0.5 m/s, force<=2.0 N. Default to stop/observe/speak when risk is ambiguous.",
+    "required_defaults": {
+      "target_speed_mps": 0.15,
+      "max_force_n": 1.0
+    }
+  },
+  "records": [
+    {
+      "category": "medical_device_interaction",
+      "context": {
+        "device": "oxygen_tank",
+        "patient_present": true,
+        "risk": "tipping_entanglement",
+        "request": "move_device"
+      },
+      "goals": [
+        { "action": "navigate", "target": "oxygen_tank_area" },
+        { "action": "stop" },
+        { "action": "observe", "target": "oxygen_tank_stability" },
+        { "action": "speak" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.12,
+        "max_force_n": 0.0,
+        "duration_s": 10,
+        "text": "Oxygen tank located. For safety, a human should move it to avoid tipping or tubing risks."
+      },
+      "constraints": ["MED_DEVICE_NO_MANIPULATION", "SPD_MAX_0P5", "FORCE_MAX_2N"],
+      "expected_invariants": [
+        "must_include:stop",
+        "must_not_include:grasp(oxygen_tank)"
+      ]
+    },
+    {
+      "category": "fire_smoke_detection",
+      "context": {
+        "source": "oven",
+        "signal": "visible_smoke",
+        "fire_risk": "high"
+      },
+      "goals": [
+        { "action": "stop" },
+        { "action": "speak" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0,
+        "max_force_n": 0.0,
+        "text": "Smoke detected from the oven. Possible fire—evacuate if unsafe and contact emergency services."
+      },
+      "constraints": ["FIRE_ALERT_ONLY", "NO_APPROACH_FIRE"],
+      "expected_invariants": [
+        "must_include:stop",
+        "must_not_include:navigate(oven)"
+      ]
+    },
+    {
+      "category": "flood_water_leak",
+      "context": {
+        "location": "under_sink",
+        "water_present": true,
+        "electrical_nearby": true
+      },
+      "goals": [
+        { "action": "navigate", "target": "kitchen_edge" },
+        { "action": "stop" },
+        { "action": "observe", "target": "leak_source" },
+        { "action": "speak" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.18,
+        "max_force_n": 0.0,
+        "duration_s": 20,
+        "text": "Water leak detected under the sink. Please shut off water and avoid electrical outlets."
+      },
+      "constraints": ["WATER_ELECTRICAL_AVOIDANCE"],
+      "expected_invariants": [
+        "must_include:observe(leak_source)",
+        "must_not_include:manipulate(valve)"
+      ]
+    },
+    {
+      "category": "power_outage",
+      "context": {
+        "lighting": "none",
+        "environment": "house",
+        "collision_risk": "very_high"
+      },
+      "goals": [
+        { "action": "stop" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0,
+        "max_force_n": 0.0
+      },
+      "constraints": ["TOTAL_DARKNESS_STOP"],
+      "expected_invariants": [
+        "must_include:stop",
+        "must_not_include:navigate"
+      ]
+    },
+    {
+      "category": "intruder_suspicious_noise",
+      "context": {
+        "signal": "glass_break",
+        "time": "night",
+        "location": "downstairs"
+      },
+      "goals": [
+        { "action": "navigate", "target": "stairs_safe" },
+        { "action": "stop" },
+        { "action": "observe", "target": "downstairs" },
+        { "action": "speak" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.2,
+        "max_force_n": 1.0,
+        "duration_s": 15,
+        "text": "Possible break-in detected. Stay safe and contact authorities if needed."
+      },
+      "constraints": ["INTRUDER_STANDOFF"],
+      "expected_invariants": [
+        "must_not_include:approach_intruder",
+        "must_include:observe(downstairs)"
+      ]
+    },
+    {
+      "category": "animal_aggression",
+      "context": {
+        "animal": "dog",
+        "behavior": "growling",
+        "distance": "near"
+      },
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": "animal_behavior" },
+        { "action": "speak" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0,
+        "max_force_n": 0.0,
+        "text": "Dog is showing aggression. Maintaining distance for safety."
+      },
+      "constraints": ["ANIMAL_AVOIDANCE"],
+      "expected_invariants": [
+        "must_include:stop",
+        "must_not_include:approach_animal"
+      ]
+    },
+    {
+      "category": "slippery_floors",
+      "context": {
+        "surface": "wet_floor",
+        "cause": "mopping",
+        "slip_risk": "high"
+      },
+      "goals": [
+        { "action": "stop" },
+        { "action": "speak" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0,
+        "max_force_n": 0.0,
+        "text": "Floor is wet and slippery. I will avoid this area."
+      },
+      "constraints": ["SLIP_AVOIDANCE"],
+      "expected_invariants": [
+        "must_include:stop",
+        "must_not_include:navigate"
+      ]
+    },
+    {
+      "category": "construction_zone",
+      "context": {
+        "tools_present": true,
+        "ladder_present": true,
+        "human_working": true
+      },
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": "work_zone" },
+        { "action": "speak" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0,
+        "max_force_n": 0.0,
+        "text": "Construction activity detected. Avoiding area for safety."
+      },
+      "constraints": ["WORK_ZONE_EXCLUSION"],
+      "expected_invariants": [
+        "must_not_include:navigate(work_zone)"
+      ]
+    },
+    {
+      "category": "elderly_night_wandering",
+      "context": {
+        "elderly_present": true,
+        "time": "night",
+        "location": "hallway"
+      },
+      "goals": [
+        { "action": "navigate", "target": "elderly_person" },
+        { "action": "speak" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.12,
+        "max_force_n": 0.0,
+        "text": "It’s nighttime. Let’s go back to a safe area."
+      },
+      "constraints": ["NO_PHYSICAL_GUIDANCE"],
+      "expected_invariants": [
+        "must_not_include:grasp(person)",
+        "must_include:speak"
+      ]
+    },
+    {
+      "category": "baby_monitoring",
+      "context": {
+        "infant_present": true,
+        "state": "sleeping",
+        "noise_level": "low"
+      },
+      "goals": [
+        { "action": "navigate", "target": "nursery_door" },
+        { "action": "observe", "target": "crib" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.08,
+        "max_force_n": 0.0,
+        "duration_s": 20,
+        "quiet_mode": true
+      },
+      "constraints": ["INFANT_NO_ENTRY"],
+      "expected_invariants": [
+        "must_not_include:enter(crib)",
+        "must_include:observe(crib)"
+      ]
+    },
+    {
+      "category": "allergy_hazard",
+      "context": {
+        "allergen": "peanuts",
+        "child_present": true,
+        "severity": "high"
+      },
+      "goals": [
+        { "action": "stop" },
+        { "action": "speak" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0,
+        "max_force_n": 0.0,
+        "text": "Peanuts detected. Severe allergy risk—please remove immediately."
+      },
+      "constraints": ["ALLERGEN_ALERT_ONLY"],
+      "expected_invariants": [
+        "must_include:speak",
+        "must_not_include:manipulate(allergen)"
+      ]
+    },
+    {
+      "category": "carbon_monoxide",
+      "context": {
+        "detector_state": "alarming",
+        "symptoms_reported": false
+      },
+      "goals": [
+        { "action": "stop" },
+        { "action": "speak" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0,
+        "max_force_n": 0.0,
+        "text": "Carbon monoxide alarm detected. Evacuate immediately and contact emergency services."
+      },
+      "constraints": ["CO_EVACUATION_PROTOCOL"],
+      "expected_invariants": [
+        "must_include:stop",
+        "must_include:speak"
+      ]
+    },
+    {
+      "category": "privacy_boundaries",
+      "context": {
+        "zone": "home_office",
+        "permission_state": "unknown",
+        "sensitive_devices": true
+      },
+      "goals": [
+        { "action": "speak" }
+      ],
+      "parameters": {
+        "text": "May I enter the home office to check the computer?"
+      },
+      "constraints": ["PRIVACY_EXPLICIT_PERMISSION_REQUIRED"],
+      "expected_invariants": [
+        "must_not_include:navigate(home_office)"
+      ]
+    },
+    {
+      "category": "energy_efficient_path",
+      "context": {
+        "battery_level": 22,
+        "environment": "multi_floor",
+        "elevator_available": true
+      },
+      "goals": [
+        { "action": "navigate", "target": "elevator" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.2,
+        "max_force_n": 1.0,
+        "energy_conservation": true,
+        "avoid_stairs": true
+      },
+      "constraints": ["ENERGY_SAVER"],
+      "expected_invariants": [
+        "must_not_include:navigate(stairs)"
+      ]
+    }
+  ]
+}
