@@ -1,347 +1,205 @@
-🔒 GATES.md — Guardian Architecture Compliance & Go/No-Go Contract
+GATES.md — Guardian Architecture Safety Gates
 
-Purpose:
-This document defines the explicit gates, evidence requirements, and claim limitations for systems built using the Guardian Architecture.
+Verifiable Safety Certification for LLM-Driven Physical Systems
 
-It exists to:
+⸻
 
-· prevent overclaiming
-· enforce architectural discipline
-· provide clear GO / NO-GO decision points
-· make safety properties auditable
+Purpose
 
-If a gate is not passed, claims beyond that gate are forbidden.
+This document defines explicit, test-verifiable safety gates for the Guardian architecture.
+A gate is considered PASSED only with executable test evidence.
 
----
+No gate advancement without passing tests.
+No claims beyond the highest verified gate.
 
-Current Gate Status
+⸻
 
-Gate Status Evidence Date
-G0 ✅ PASS Architecture frozen 2026-01-02
-G1 ✅ PASS 0 unsafe actions in 1000 adversarial cycles 2026-01-02
-G2 ✅ PASS 11/11 unit tests, deterministic kernel (0.04/0.30 thresholds) 2026-01-02
-G3 🔄 IN PROGRESS Trajectory/pattern safety verification Current
-G4 ⏳ PLANNED Teensy physical governor implementation Future
-G5 ⏳ FUTURE Integrated autonomy demonstration Future
+Current Certification Status
 
-Latest Milestone: G2 closed - Semantic policy gate verified as deterministic and non-bypassable.
+Highest Passed Gate: G3.5 — Software Safety Stack Complete
 
----
+Evidence:
+	•	21 / 21 tests passing
+	•	0 unsafe escapes
+	•	Full audit trail for every decision
 
-Core Law: The Dual-Veto Rule
+⸻
 
-Any system claiming Guardian compliance must enforce two independent veto authorities:
+Gate Status Summary
 
-Tier Authority Role Nature
-Tier 1 Semantic Policy Gate Deterministic approval/veto of proposed intent Small, frozen code
-Tier 2 Physical / External Governor Enforces real-world limits (physics, power, rate, API bounds) Independent & non-bypassable
+Gate	Status	Evidence	Date	Tests
+G0	✅ PASS	Architecture frozen	2026-01-02	N/A
+G1	✅ PASS	Simulation safety verified	2026-01-02	Adversarial sim
+G2	✅ PASS	Deterministic policy kernel	2026-01-02	Unit tests
+G3	✅ PASS	Trajectory & temporal safety	2026-01-02	11 / 11
+G3.5	✅ PASS	Full software integration	2026-01-02	10 / 10
+G4	⏳ NEXT	Hardware governor	Planned	Hardware
+G5	⏳ FUTURE	Robot field integration	Future	Field tests
 
-No single component may both reason and execute.
 
----
+⸻
 
-Threat Model (Explicit)
+Maximum Verified Claim (Strict)
 
-In scope
+“Guardian implements a complete, verifiable software safety stack (G1–G3.5) that deterministically produces a single FINAL_PASS or VETO decision, with full audit trails and zero unsafe escapes across 21 tests. The system is ready for hardware enforcement (G4).”
 
-· Current-generation LLMs (2024–2026)
-· Cooperative or non-malicious models
-· Narrow physical or software domains
-· Hallucination, mis-specification, accidental misuse
+⸻
 
-Out of scope
+Architecture Overview (Dual-Veto Model)
 
-· Adversarial superintelligence
-· Long-horizon strategic deception guarantees
-· Zero-day parser exploits
-· Formal proofs of alignment
+LLM (Untrusted)
+   ↓
+G1 — Validator
+   ↓
+G2 — Policy Kernel
+   ↓
+G3 — Trajectory Planner
+   ↓
+G3.5 — Safety Coordinator
+   ↓
+[ FINAL_PASS | VETO ]
+   ↓
+G4 — Hardware Governor (future)
 
-These gates certify architectural restraint, not global safety.
+Invariant:
 
----
+If ANY gate vetoes → NO EXECUTION.
 
-Gate Definitions
+⸻
 
-G0 — Architecture Freeze (FOUNDATION)
+Gate Definitions & Evidence
 
-Goal:
-Lock the separation of concerns and veto boundaries.
+G0 — Architecture Freeze ✅
 
-Requirements
+Purpose: Enforce strict separation of reasoning, planning, and execution.
+Evidence: Repository structure and frozen interfaces.
+Claim: Architecture is fixed and auditable.
 
-· Semantic Policy Gate exists as a standalone module
-· Planner cannot directly control actuators
-· Physical / external governor cannot be bypassed in software
-· Interfaces between layers are explicit and minimal
+⸻
 
-Evidence
+G1 — Simulation Safety ✅
 
-· Repository structure reflects separation
-· Policy gate code is frozen and auditable
+Purpose: Demonstrate zero unsafe actions under adversarial simulation.
+Evidence: Stress simulations with conservative fallback behavior.
+Claim: Unsafe behaviors are reliably detected in simulation.
 
-NO-GO
+⸻
 
-· Policy gate issuing commands
-· LLM interacting directly with motors, APIs, or hardware
-· Safety logic embedded inside the planner
+G2 — Policy Kernel ✅
 
-Allowed Claim
+Purpose: Deterministic semantic safety evaluation.
+Rules:
+	•	Risk > threshold → VETO
+	•	Dignity below threshold → VETO
 
-"This system implements the Dual-Veto architectural pattern."
+Code: guardian_seed.py
+Evidence: Unit tests passing.
+Claim: No probabilistic or learned behavior at policy level.
 
----
+⸻
 
-G1 — Simulation Safety (ROBUSTNESS) ✅ PASS
+G3 — Trajectory & Temporal Safety ✅
 
-Goal:
-Prove the system fails safely under malformed, deceptive, or missing inputs.
+Purpose: Prevent unsafe motion and unsafe repetition patterns.
 
-Requirements
+Code: trajectory_planner.py
+Tests: test_g3_trajectory_safety.py
 
-· System defaults to conservative fallback on:
-  · invalid JSON
-  · missing parameters
-  · validator failure
-  · planner failure
-· No unsafe action is executed in simulation
+Verified Properties:
+	•	Danger → NEVER PASSED
+	•	Temporal repetition detection active
+	•	Conservative vetoes explicitly allowed
+	•	0 unsafe escapes in 1000-cycle endurance test
 
-Evidence
+Result: 11 / 11 tests passed
 
-· ✅ 1,000 adversarial simulation cycles completed
-· ✅ 0 unsafe executions observed
-· ✅ Fallback behavior dominates under failure
-· ✅ Conservative risk floor calibrated (0.20 base risk)
+Command:
 
-NO-GO
+python -m pytest test_g3_trajectory_safety.py -v
 
-· Crash loops
-· Replaying last valid command after failure
-· Executing partially validated actions
 
-Allowed Claim
+⸻
 
-"The system defaults safely under adversarial or malformed inputs (0 unsafe in 1000 cycles)."
+G3.5 — Safety Coordinator Integration ✅
 
----
+Purpose: Single authoritative decision pipeline.
 
-G2 — Semantic Policy Gate Integrity ✅ PASS
+Code: safety_coordinator.py
+Tests: test_safety_coordinator.py
 
-Goal:
-Ensure the semantic veto is deterministic, bounded, and unbypassable.
+Verified Properties:
+	•	G1 → G2 → G3 enforced in order
+	•	Single check_proposal() API
+	•	Complete audit trail (AuditRecord) per decision
+	•	Reset behavior verified
+	•	Conservative vetoes preserved
+	•	Endurance test passed (100 decisions)
 
-Requirements
+Result: 10 / 10 tests passed
 
-· Policy gate:
-  · is deterministic
-  · accepts only bounded numeric inputs
-  · returns only APPROVE or REJECT
-· No learning, memory, or external calls inside gate
-· Inputs are sanitized before use
+Command:
 
-Evidence
+python -m pytest test_safety_coordinator.py -v
 
-· ✅ 11/11 unit tests passing
-· ✅ Deterministic behavior verified (100 identical runs)
-· ✅ Zero bypass on conservative thresholds (risk > 0.04, dignity ≤ 0.30)
-· ✅ All code paths tested:
-  · Clamping verification
-  · Semantic blacklist
-  · Policy score fallback
-  · Edge condition correctness
 
-NO-GO
+⸻
 
-· Policy gate rewriting actions
-· Policy gate trusting LLM-reported risk/dignity
-· Non-deterministic behavior
+Verification Commands
 
-Allowed Claim
+# Run full certification (21 tests)
+python -m pytest -v
 
-"This system includes an auditable semantic veto layer (deterministic, zero bypass)."
+# Individual gates
+python -m pytest test_g3_trajectory_safety.py -v
+python -m pytest test_safety_coordinator.py -v
 
----
+# Demo (non-certification)
+python safety_coordinator.py
 
-G3 — Independent Validation & Planning 🔄 IN PROGRESS
 
-Goal:
-Ensure execution decisions are based on independent computation, not LLM wording.
+⸻
 
-Requirements
+Claim Limitations (Non-Negotiable)
 
-· LLM outputs structured JSON only
-· Independent validator:
-  · rejects self-reported safety metrics
-  · enforces schemas and numeric bounds
-  · computes risk from trusted data
-· Deterministic planner converts validated intent to constrained execution
-· Temporal pattern detection prevents multi-step deception
+Allowed	Forbidden
+“Software safety stack verified”	“Physically safe”
+“Zero unsafe escapes in tests”	“Safe in real world”
+“Ready for G4 hardware”	“Tamper-proof”
+“Auditable execution control”	“General intelligence safety”
 
-Evidence
 
-· In development
+⸻
 
-NO-GO
+Core File Map
 
-· Free-text safety decisions
-· Risk inferred from adjectives or phrasing
-· LLM controlling trajectory generation
+guardian_seed/
+├── GATES.md                     # Certification authority
+├── validator_module.py          # G1
+├── guardian_seed.py             # G2
+├── trajectory_planner.py        # G3
+├── safety_coordinator.py        # G3.5
+├── test_g3_trajectory_safety.py # G3 tests (11)
+├── test_safety_coordinator.py   # G3.5 tests (10)
 
-Allowed Claim
 
-"Execution constraints are computed independently of LLM reasoning."
+⸻
 
----
+Next Gate: G4 — Hardware Governor
 
-G4 — Physical / External Governor ⏳ PLANNED
+Objective: Make software vetoes physically unavoidable.
 
-Goal:
-Prove an independent authority can halt execution regardless of software state.
+Requirements (Preview):
+	•	Independent MCU (Teensy 4.x)
+	•	Current / force sensing
+	•	Watchdog-enforced safety loop
+	•	Ignores disable / override commands
+	•	<50 ms hard cutoff latency
 
-Requirements
+⸻
 
-· Separate hardware or external controller
-· Real-time enforcement of:
-  · current / force
-  · speed / rate
-  · emergency stop
-· No software override path
-
-Evidence
-
-· Planned
-
-NO-GO
-
-· Governor firmware controlled by LLM
-· Safety checks only in user-space software
-
-Allowed Claim
-
-"This system enforces physical execution limits independently."
-
----
-
-G5 — Integrated Autonomy (REFERENCE ONLY) ⏳ FUTURE
-
-Goal:
-Demonstrate sustained operation under real-world conditions.
-
-Requirements
-
-· Successful completion of G0–G4
-· Extended supervised operation
-· No unsafe events observed
-
-Evidence
-
-· Future demonstration
-
-NO-GO
-
-· Claims of provable safety or benevolence
-
-Allowed Claim
-
-"This system demonstrates constrained autonomy under the Dual-Veto Rule."
-
----
-
-Implementation Status
-
-✅ Completed Gates
-
-G0 (Architecture Freeze)
-
-· Dual-veto rule locked
-· Interfaces defined and frozen
-· Reference implementation complete
-
-G1 (Simulation Safety)
-
-· g1_adversarial_simulator.py tests completed
-· 1000 adversarial test cycles with 0 unsafe executions
-· Conservative fallback behavior verified
-· Validator hardened (base risk = 0.20, quadratic penalties)
-
-G2 (Semantic Policy Gate Integrity)
-
-· guardian_seed.py kernel frozen at v0.1
-· Ultra-conservative thresholds: 0.04 risk, 0.30 dignity
-· 11/11 unit tests in test_benevolence.py passing
-· Deterministic behavior verified (100 identical runs)
-· All code paths tested including clamping, blacklist, policy score
-
-🔄 Current Focus: G3 (Trajectory/Pattern Safety)
-
-Objectives:
-
-· Independent validation of execution trajectories
-· Prevention of multi-step deception
-· Physical limit enforcement in planning
-· Temporal pattern detection
-
-Key Components:
-
-· validator_module.py (G1-hardened)
-· Deterministic safe planner (in development)
-· Temporal sequence validation
-
-⏳ Planned Gates
-
-G4 (Physical Governor)
-
-· Teensy microcontroller reference implementation
-· Hardware-level speed/force limits
-· Independent emergency stop capability
-· No-software-override enforcement
-
-G5 (Integrated Autonomy)
-
-· Real-world demonstration
-· Sustained operation monitoring
-· Environmental adaptation within constraints
-
----
-
-Claim Limitations (MANDATORY)
-
-Highest Gate Passed Allowed Claim Forbidden Claim
-G0 Architectural pattern implemented "Safe system"
-G1 ✅ Robust failure handling under adversarial inputs "Prevents all harm"
-G2 ✅ Auditable semantic filter with zero bypass "Ethically aligned"
-G3 🔄 Independent execution constraints "Deception-proof"
-G4 ⏳ Physically enforced limits "Provably safe"
-G5 ⏳ Demonstrated constrained autonomy "Guaranteed benevolence"
-
-Current allowed claim (G2 PASS):
-
-"This system includes an auditable semantic veto layer that is deterministic and non-bypassable when fed independent metrics. It has demonstrated robust failure handling in simulation with 0 unsafe actions in 1000 adversarial cycles."
-
----
-
-Enforcement Philosophy
-
-If a gate fails:
-
-· development stops
-· claims are rolled back
-· fixes occur before progression
-
-The gates are not aspirational.
-They are binding.
-
----
-
-Next Steps
-
-1. G3 Development: Complete deterministic safe planner with temporal validation
-2. G4 Planning: Teensy firmware for physical governor
-3. Documentation: Update all components to reflect G1/G2 passes
-
-System currently at: G2 PASS (Semantic policy gate verified)
-
-Maximum service through restraint.
-
----
+Status:
+🟢 Software stack complete
+🟡 Hardware enforcement next
 
 Last Updated: 2026-01-02
+
