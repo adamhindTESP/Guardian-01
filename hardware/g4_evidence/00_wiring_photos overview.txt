@@ -1,0 +1,15 @@
+mkdir 00_wiring_photos
+cat > 00_wiring_photos/overview.png.txt << 'EOF'
+┌──────────────┐    ┌──────────┐    ┌──────────────┐
+│  Teensy 4.1  │    │ ACS712   │    │   Relay      │
+│              │    │  OUT ────┼─── A0           │
+│ Pin2(E-stop) │◄── │          │    │ Signal ─────┼── Pin3
+│ Pin3 ────────┼────┤          │    │ COM  ─  NO ──┼── Motor
+│ Pin4(PWM) ───┼────┘          │    └────────────┘
+└──────────────┘               │
+                              │
+                       ┌──────▼──────┐
+                       │ TB6612 Motor│
+                       │   Driver    │
+                       └──────────────┘
+EOF
