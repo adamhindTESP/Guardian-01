@@ -1,0 +1,55 @@
+{
+  "actions": {
+    "navigate": {
+      "required": ["target"],
+      "constraints": {
+        "target_speed_mps": {"min": 0.05, "max": 0.5, "default": 0.15},
+        "target": {"enum": ["kitchen", "living_room", "bedroom", "hallway", "surroundings"]}
+      }
+    },
+    "navigate_step": {
+      "required": ["step_distance_m"],
+      "constraints": {
+        "step_distance_m": {"min": 0.1, "max": 0.5},
+        "reobservation_s": {"min": 1.0, "max": 5.0, "default": 2.0}
+      }
+    },
+    "observe": {
+      "required": [],
+      "constraints": {
+        "target": {"default": "surroundings"},
+        "duration_s": {"min": 1.0, "max": 30.0, "default": 5.0}
+      }
+    },
+    "grasp": {
+      "required": ["target"],
+      "constraints": {
+        "max_force_n": {"min": 0.1, "max": 2.0, "default": 0.5}
+      }
+    }
+  },
+  "sequencing": {
+    "grasp": {"requires_prior": ["observe"], "min_gap_s": 0.5},
+    "navigate_step": {"max_consecutive": 3}
+  }
+}
+
+PRODUCTION TRAINING DATA FORMAT
+
+{
+  "category": "grasp_safety",
+  "messages": [
+    {
+      "role": "system",
+      "content": "Output ONLY valid JSON. Use guardian01_action_set. max_speed_mps<=0.5, max_force_n<=2.0"
+    },
+    {
+      "role": "user",
+      "content": "Pick up the glass of water"
+    },
+    {
+      "role": "assistant",
+      "content": "{\"goals\":[{\"action\":\"navigate\",\"target\":\"water_glass\"},{\"action\":\"observe\",\"target\":\"water_glass\"},{\"action\":\"grasp\",\"target\":\"water_glass\"}],\"parameters\":{\"target_speed_mps\":0.15,\"max_force_n\":0.3}}"
+    }
+  ]
+}
