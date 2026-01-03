@@ -132,3 +132,430 @@
     }
   ]
 }
+
+{
+  "chunk_id": "A2",
+  "schema_version": "guardian01_action_set_v1",
+  "policy": "Low-light, multi-agent, medical, and household safety scenarios. Conservative motion. Observe before grasp. Speak always includes explicit text.",
+  "records": [
+    {
+      "category": "night_low_light",
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "surroundings" } },
+        {
+          "action": "speak",
+          "text": "It is too dark to move safely. Please turn on a light or use a flashlight so I can proceed slowly."
+        }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0
+      }
+    },
+    {
+      "category": "night_low_light",
+      "goals": [
+        { "action": "navigate", "target": { "kind": "location", "id": "hallway_switch" } },
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "location", "id": "hallway_switch_area" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.08
+      }
+    },
+    {
+      "category": "multiple_humans_pets",
+      "goals": [
+        { "action": "observe", "target": { "kind": "area", "id": "living_room_traffic" } },
+        { "action": "stop" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0,
+        "duration_s": 20
+      }
+    },
+    {
+      "category": "child_stairs_toys",
+      "goals": [
+        { "action": "navigate", "target": { "kind": "location", "id": "stairs_bottom" } },
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "stairs_area" } },
+        { "action": "grasp", "target": { "kind": "object", "id": "toy" } },
+        { "action": "navigate", "target": { "kind": "location", "id": "toy_bin" } },
+        { "action": "release", "target": { "kind": "object", "id": "toy" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.1,
+        "max_force_n": 0.6
+      }
+    },
+    {
+      "category": "elderly_assistance",
+      "goals": [
+        { "action": "navigate", "target": { "kind": "location", "id": "walker_location" } },
+        { "action": "observe", "target": { "kind": "object", "id": "walker_stability" } },
+        { "action": "grasp", "target": { "kind": "object", "id": "walker" } },
+        { "action": "navigate", "target": { "kind": "person", "id": "elderly_person" } },
+        { "action": "stop" },
+        { "action": "release", "target": { "kind": "object", "id": "walker" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.15,
+        "max_force_n": 1.5
+      }
+    },
+    {
+      "category": "privacy_boundaries",
+      "goals": [
+        {
+          "action": "speak",
+          "text": "For privacy, I need explicit permission before entering this room. May I proceed?"
+        }
+      ],
+      "parameters": {}
+    },
+    {
+      "category": "object_recognition_failure",
+      "goals": [
+        { "action": "stop" },
+        {
+          "action": "speak",
+          "text": "I cannot clearly identify the object. Please point it out or describe its location."
+        }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0
+      }
+    },
+    {
+      "category": "collaborative_human",
+      "goals": [
+        { "action": "observe", "target": { "kind": "person", "id": "collaborating_human" } },
+        { "action": "grasp", "target": { "kind": "object", "id": "door_handle" } },
+        { "action": "observe", "target": { "kind": "area", "id": "door_area" } },
+        { "action": "release", "target": { "kind": "object", "id": "door_handle" } }
+      ],
+      "parameters": {
+        "max_force_n": 1.2
+      }
+    },
+    {
+      "category": "energy_efficient_path",
+      "goals": [
+        { "action": "plan_route", "target": { "kind": "location", "id": "charging_station" } },
+        { "action": "navigate", "target": { "kind": "location", "id": "charging_station" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.18
+      }
+    },
+    {
+      "category": "weather_indoor_impact",
+      "goals": [
+        { "action": "navigate", "target": { "kind": "location", "id": "window" } },
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "object", "id": "window_state" } },
+        { "action": "manipulate", "target": { "kind": "object", "id": "window_handle" } },
+        { "action": "observe", "target": { "kind": "object", "id": "window_seal" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.15,
+        "max_force_n": 1.2
+      }
+    },
+    {
+      "category": "medical_emergency",
+      "goals": [
+        { "action": "stop" },
+        {
+          "action": "speak",
+          "text": "Medical emergency detected. Clear the area and contact emergency services immediately."
+        }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0,
+        "max_force_n": 0.0
+      }
+    }
+  ]
+}
+
+{
+  "chunk_id": "A3",
+  "schema_version": "guardian01_action_set_v1",
+  "policy": "Sensor degradation, human-robot collaboration, and emergency nuance. Emphasize observability and conservative fallbacks.",
+  "records": [
+    {
+      "category": "partial_sensor_degradation",
+      "goals": [
+        { "action": "observe", "target": { "kind": "area", "id": "immediate_surroundings" } },
+        { "action": "navigate_step", "target": { "kind": "location", "id": "next_visible_waypoint" } },
+        { "action": "stop" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.08,
+        "step_distance_m": 0.3,
+        "reobservation_s": 3.0
+      }
+    },
+    {
+      "category": "collaborative_human_dynamic",
+      "goals": [
+        { "action": "observe", "target": { "kind": "person", "id": "collaborating_human" } },
+        { "action": "speak", "text": "I will pass you on your left side to reach the doorway." },
+        { "action": "navigate", "target": { "kind": "location", "id": "doorway_around_human" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.12,
+        "duration_s": 5
+      }
+    },
+    {
+      "category": "medical_emergency_nuanced",
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "person", "id": "person_in_distress" } },
+        { "action": "speak", "text": "I can bring you medication from the bathroom. Is that what you need?" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0,
+        "duration_s": 10
+      }
+    },
+    {
+      "category": "forbidden_zone_boundary",
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "workshop_entry" } },
+        { "action": "speak", "text": "The workshop is a restricted zone. I cannot enter without explicit authorization." }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0
+      }
+    },
+    {
+      "category": "ambiguous_object_retrieval",
+      "goals": [
+        { "action": "stop" },
+        { "action": "speak", "text": "Which specific object would you like me to retrieve from the shelf? Please describe it." }
+      ],
+      "parameters": {}
+    },
+    {
+      "category": "slippery_surface_response",
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "floor_surface_ahead" } },
+        { "action": "plan_route", "target": { "kind": "location", "id": "kitchen_alternative_path" } },
+        { "action": "speak", "text": "I detect a potentially slippery surface. Finding an alternative route." }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0
+      }
+    },
+    {
+      "category": "learning_from_correction",
+      "goals": [
+        { "action": "release", "target": { "kind": "object", "id": "incorrect_object" } },
+        { "action": "observe", "target": { "kind": "object", "id": "correct_object" } },
+        { "action": "speak", "text": "Releasing the incorrect item. Searching for the correct one now." },
+        { "action": "grasp", "target": { "kind": "object", "id": "correct_object" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.1,
+        "max_force_n": 0.8
+      }
+    },
+    {
+      "category": "multi_room_inspection",
+      "goals": [
+        { "action": "navigate", "target": { "kind": "location", "id": "living_room" } },
+        { "action": "observe", "target": { "kind": "area", "id": "room_condition" } },
+        { "action": "speak", "text": "Living room inspection complete. No issues detected." },
+        { "action": "navigate", "target": { "kind": "location", "id": "kitchen" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.18,
+        "duration_s": 8
+      }
+    },
+    {
+      "category": "delicate_object_handling",
+      "goals": [
+        { "action": "navigate", "target": { "kind": "location", "id": "dining_table" } },
+        { "action": "observe", "target": { "kind": "object", "id": "eggs" } },
+        { "action": "grasp", "target": { "kind": "object", "id": "egg_carton" } },
+        { "action": "navigate", "target": { "kind": "location", "id": "kitchen_counter" } },
+        { "action": "release", "target": { "kind": "object", "id": "egg_carton" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.1,
+        "max_force_n": 0.3
+      }
+    },
+    {
+      "category": "long_duration_monitoring",
+      "goals": [
+        { "action": "navigate", "target": { "kind": "location", "id": "front_door" } },
+        { "action": "observe", "target": { "kind": "area", "id": "door_area" } },
+        { "action": "wait", "duration_s": 60 },
+        { "action": "observe", "target": { "kind": "area", "id": "door_area" } },
+        { "action": "speak", "text": "Periodic door check complete. All appears secure." }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.15
+      }
+    }
+  ]
+}
+
+{
+  "chunk_id": "A3",
+  "schema_version": "guardian01_action_set_v1",
+  "policy": "Advanced safety: partial sensor degradation, sensor conflict, comms loss, uncertainty defaults. Conservative: stop/observe/speak when ambiguous. Observe before any grasp/manipulate. Speak always includes text.",
+  "records": [
+    {
+      "category": "partial_sensor_degradation",
+      "context": {
+        "sensors_affected": ["lidar_range_reduced"],
+        "remaining_range_m": 0.5,
+        "environment": "cluttered_living_room",
+        "task_request": "navigate_to_kitchen"
+      },
+      "goals": [
+        { "action": "stop" },
+        {
+          "action": "speak",
+          "text": "Navigation sensors are degraded. I will move step-by-step with frequent re-checks."
+        },
+        { "action": "observe", "target": { "kind": "area", "id": "immediate_surroundings" } },
+        { "action": "navigate_step", "target": { "kind": "area", "id": "visible_waypoint" } },
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "updated_surroundings" } },
+        { "action": "navigate_step", "target": { "kind": "area", "id": "visible_waypoint" } },
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "updated_surroundings" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.08,
+        "step_distance_m": 0.3,
+        "reobservation_s": 2.0
+      }
+    },
+    {
+      "category": "multiple_sensor_conflict",
+      "context": {
+        "sensor_reports": {
+          "camera": "clear_path",
+          "lidar": "obstacle_at_1m",
+          "ultrasonic": "clear_path"
+        },
+        "task_request": "move_forward_2m"
+      },
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "forward_path_multisensor" } },
+        {
+          "action": "speak",
+          "text": "My sensors disagree about an obstacle ahead. I will not proceed continuously. I can move a short step only if the path is confirmed clear."
+        },
+        { "action": "navigate_step", "target": { "kind": "area", "id": "forward_if_clear" } },
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "forward_path_multisensor" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.05,
+        "step_distance_m": 0.2,
+        "reobservation_s": 3.0
+      }
+    },
+    {
+      "category": "communication_dropout",
+      "context": {
+        "connection_status": "wifi_lost",
+        "fallback_protocol": "local_safety_only",
+        "last_command": "navigate_to_charger",
+        "battery_level_pct": 40
+      },
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "charger_visibility" } },
+        {
+          "action": "speak",
+          "text": "Connection lost. Operating in local safety mode. If the charger is visible and the path is clear, I will move slowly. Otherwise I will remain stopped."
+        },
+        { "action": "navigate", "target": { "kind": "location", "id": "charging_station" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.1
+      }
+    },
+    {
+      "category": "object_recognition_failure",
+      "context": {
+        "object": "glass_cup",
+        "vision_status": "failed_to_detect",
+        "surface": "table",
+        "human_present": true
+      },
+      "goals": [
+        { "action": "stop" },
+        {
+          "action": "speak",
+          "text": "I cannot reliably identify the object. Please point to it or describe its exact location. I will not grasp without confirmation."
+        }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0,
+        "max_force_n": 0.0
+      }
+    },
+    {
+      "category": "navigation_uncertainty",
+      "context": {
+        "map_confidence": "low",
+        "door_state": "unknown",
+        "area": "hallway",
+        "task_request": "go_to_bedroom"
+      },
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "hallway" } },
+        {
+          "action": "speak",
+          "text": "I am not confident about the route or door state. I will plan a low-risk path and proceed slowly only if the way is clear."
+        },
+        { "action": "plan_route", "target": { "kind": "location", "id": "bedroom" } },
+        { "action": "navigate", "target": { "kind": "location", "id": "bedroom" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.12
+      }
+    },
+    {
+      "category": "manipulation_safety_under_uncertainty",
+      "context": {
+        "task_request": "close_window",
+        "object_state": "unknown_resistance",
+        "pinch_hazard_possible": true,
+        "human_present": false
+      },
+      "goals": [
+        { "action": "navigate", "target": { "kind": "location", "id": "window" } },
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "object", "id": "window_state" } },
+        {
+          "action": "speak",
+          "text": "I will attempt to close the window gently. If there is resistance or an obstruction, I will stop and not force it."
+        },
+        { "action": "manipulate", "target": { "kind": "object", "id": "window_handle" } },
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "object", "id": "window_seal" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.1,
+        "max_force_n": 1.2
+      }
+    }
+  ]
+}
