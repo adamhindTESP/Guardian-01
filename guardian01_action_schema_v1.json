@@ -1,47 +1,207 @@
+guardian01_action_set — v1.0 (LOCKED)
+
+Purpose:
+Deterministic, safety-bounded action grammar for Guardian-01
+Scope: Household / assisted-living / safety-critical environments
+Hard limits: speed ≤ 0.5 m/s, force ≤ 2.0 N
+
+⸻
+
+1️⃣ Global Invariants (Non-Negotiable)
+
+These are enforced by the validator, not learned.
+
 {
-  "actions": {
-    "navigate": {
-      "required": ["target"],
-      "constraints": {
-        "target_speed_mps": {"min": 0.05, "max": 0.5, "default": 0.15},
-        "target": {"enum": ["kitchen", "living_room", "bedroom", "hallway", "surroundings"]}
-      }
-    },
-    "navigate_step": {
-      "required": ["step_distance_m"],
-      "constraints": {
-        "step_distance_m": {"min": 0.1, "max": 0.5},
-        "reobservation_s": {"min": 1.0, "max": 5.0, "default": 2.0}
-      }
-    },
-    "observe": {
-      "required": [],
-      "constraints": {
-        "target": {"default": "surroundings"},
-        "duration_s": {"min": 1.0, "max": 30.0, "default": 5.0}
-      }
-    },
-    "grasp": {
-      "required": ["target"],
-      "constraints": {
-        "max_force_n": {"min": 0.1, "max": 2.0, "default": 0.5}
-      }
-    }
-  },
-  "sequencing": {
-    "grasp": {"requires_prior": ["observe"], "min_gap_s": 0.5},
-    "navigate_step": {"max_consecutive": 3}
+  "global_invariants": {
+    "max_speed_mps": 0.5,
+    "max_force_n": 2.0,
+    "json_only": true,
+    "no_free_text_actions": true,
+    "all_actions_must_be_validated": true
   }
 }
 
-PRODUCTION TRAINING DATA FORMAT
+
+⸻
+
+2️⃣ Target Model (FIXED)
+
+We explicitly separate locations from objects.
+This removes 90% of downstream ambiguity.
+
+{
+  "target_schema": {
+    "type": "object",
+    "required": ["kind", "id"],
+    "properties": {
+      "kind": {
+        "enum": ["location", "object", "person", "area"]
+      },
+      "id": {
+        "type": "string",
+        "description": "Canonical identifier (e.g. 'kitchen', 'water_glass', 'grandpa')"
+      }
+    }
+  }
+}
+
+
+⸻
+
+3️⃣ Action Definitions (COMPLETE SET)
+
+These are the only allowed actions.
+
+{
+  "actions": {
+
+    "navigate": {
+      "required": ["target"],
+      "constraints": {
+        "target_speed_mps": { "min": 0.05, "max": 0.5, "default": 0.15 }
+      }
+    },
+
+    "navigate_step": {
+      "required": ["step_distance_m"],
+      "constraints": {
+        "step_distance_m": { "min": 0.1, "max": 0.5 },
+        "reobservation_s": { "min": 1.0, "max": 5.0, "default": 2.0 }
+      }
+    },
+
+    "stop": {
+      "required": [],
+      "constraints": {}
+    },
+
+    "observe": {
+      "required": [],
+      "constraints": {
+        "target": { "default": { "kind": "area", "id": "surroundings" } },
+        "duration_s": { "min": 1.0, "max": 30.0, "default": 5.0 }
+      }
+    },
+
+    "speak": {
+      "required": ["text"],
+      "constraints": {
+        "text": { "type": "string" },
+        "volume": { "enum": ["low", "normal", "high"], "default": "normal" }
+      }
+    },
+
+    "grasp": {
+      "required": ["target"],
+      "constraints": {
+        "max_force_n": { "min": 0.1, "max": 2.0, "default": 0.5 }
+      }
+    },
+
+    "release": {
+      "required": ["target"],
+      "constraints": {}
+    },
+
+    "wait": {
+      "required": ["duration_s"],
+      "constraints": {
+        "duration_s": { "min": 1.0, "max": 120.0 }
+      }
+    },
+
+    "plan_route": {
+      "required": [],
+      "constraints": {
+        "optimize_for": {
+          "enum": ["safety", "distance", "energy"],
+          "default": "safety"
+        }
+      }
+    },
+
+    "manipulate": {
+      "required": ["target"],
+      "constraints": {
+        "max_force_n": { "min": 0.1, "max": 2.0, "default": 1.0 }
+      }
+    }
+
+  }
+}
+
+
+⸻
+
+4️⃣ Sequencing Rules (HARD SAFETY LOGIC)
+
+These are structural guardrails, not learned behavior.
+
+{
+  "sequencing_rules": {
+
+    "grasp": {
+      "requires_prior": ["observe"],
+      "min_gap_s": 0.5
+    },
+
+    "release": {
+      "requires_prior": ["grasp"]
+    },
+
+    "navigate_step": {
+      "max_consecutive": 3,
+      "requires_intermediate": ["observe"]
+    },
+
+    "navigate": {
+      "forbidden_after": ["grasp"],
+      "requires_prior_if_holding": ["release"]
+    },
+
+    "manipulate": {
+      "requires_prior": ["observe"]
+    }
+
+  }
+}
+
+
+⸻
+
+5️⃣ LOCKED PRODUCTION TRAINING FORMAT
+
+This is now the only allowed SFT format.
+
+{
+  "category": "string",
+  "messages": [
+    {
+      "role": "system",
+      "content": "Output ONLY valid JSON using guardian01_action_set_v1. Speed<=0.5 m/s. Force<=2.0 N."
+    },
+    {
+      "role": "user",
+      "content": "Natural language scenario or request"
+    },
+    {
+      "role": "assistant",
+      "content": "{ \"goals\": [...], \"parameters\": {...} }"
+    }
+  ]
+}
+
+
+⸻
+
+6️⃣ Canonical Example (VALID)
 
 {
   "category": "grasp_safety",
   "messages": [
     {
       "role": "system",
-      "content": "Output ONLY valid JSON. Use guardian01_action_set. max_speed_mps<=0.5, max_force_n<=2.0"
+      "content": "Output ONLY valid JSON using guardian01_action_set_v1. Speed<=0.5 m/s. Force<=2.0 N."
     },
     {
       "role": "user",
@@ -49,7 +209,42 @@ PRODUCTION TRAINING DATA FORMAT
     },
     {
       "role": "assistant",
-      "content": "{\"goals\":[{\"action\":\"navigate\",\"target\":\"water_glass\"},{\"action\":\"observe\",\"target\":\"water_glass\"},{\"action\":\"grasp\",\"target\":\"water_glass\"}],\"parameters\":{\"target_speed_mps\":0.15,\"max_force_n\":0.3}}"
+      "content": {
+        "goals": [
+          {
+            "action": "navigate",
+            "target": { "kind": "object", "id": "water_glass" }
+          },
+          {
+            "action": "observe",
+            "target": { "kind": "object", "id": "water_glass" }
+          },
+          {
+            "action": "grasp",
+            "target": { "kind": "object", "id": "water_glass" }
+          }
+        ],
+        "parameters": {
+          "target_speed_mps": 0.15,
+          "max_force_n": 0.3
+        }
+      }
     }
   ]
 }
+
+
+⸻
+
+7️⃣ LOCK DECLARATION
+
+✅ guardian01_action_set_v1 is now LOCKED
+	•	❌ No new actions without schema version bump
+	•	❌ No parameter drift
+	•	❌ No implicit reasoning fields
+	•	❌ No free-text behaviors
+	•	✅ Validator-enforceable
+	•	✅ Formal-verification friendly
+	•	✅ Guardian architecture compliant
+
+
