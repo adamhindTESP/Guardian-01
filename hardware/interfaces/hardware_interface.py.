@@ -1,0 +1,217 @@
+#!/usr/bin/env python3
+"""
+hardware_interface.py - G4 Hardware Governor Interface
+
+Python-side interface to the Teensy 4.1 physical safety governor.
+Communicates via USB serial (virtual COM port).
+
+Protocol:
+- Pi → Teensy: "MOTOR <0-255>"   Request PWM speed
+- Pi → Teensy: "STATUS"          Request current state
+- Pi → Teensy: "RESET"           Clear E-stop latch (after physical reset)
+- Pi → Teensy: "HEARTBEAT"       Prevent watchdog timeout
+- Teensy → Pi: "OK" or "MOTOR_SET: ..."
+- Teensy → Pi: "VETO: <reason>"
+- Teensy → Pi: "STATUS: enabled=1 speed=128 current=1500mA"
+- Teensy → Pi: Unsolicited "EMERGENCY_STOP" or "WATCHDOG_TIMEOUT"
+
+Safety Design:
+- All motor commands are REQUESTS — Teensy has final authority.
+- Hardware vetoes are logged and respected.
+- Watchdog: Teensy stops motor if no command in 1s.
+"""
+
+import serial
+import time
+import logging
+from typing import Optional, Dict, Any
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+class HardwareGovernorError(Exception):
+    """Raised for hardware governor communication errors."""
+    pass
+
+class HardwareGovernor:
+    """
+    Interface to the G4 Teensy safety governor.
+    """
+    
+    def __init__(self, port: str = '/dev/ttyACM0', baudrate: int = 115200, timeout: float = 1.0):
+        """
+        Initialize serial connection to Teensy.
+        
+        Args:
+            port: Serial port (e.g., '/dev/ttyACM0' on Linux, 'COMx' on Windows)
+            baudrate: Must match Teensy firmware (115200)
+            timeout: Read timeout in seconds
+        """
+        self.port = port
+        self.baudrate = baudrate
+        self.timeout = timeout
+        self.serial: Optional[serial.Serial] = None
+        self.last_heartbeat = 0
+        self.heartbeat_interval = 0.5  # Send heartbeat every 0.5s
+        
+        self.connect()
+    
+    def connect(self) -> None:
+        """Establish serial connection and wait for Teensy boot."""
+        try:
+            self.serial = serial.Serial(self.port, self.baudrate, timeout=self.timeout)
+            time.sleep(2.0)  # Wait for Teensy to boot and print READY message
+            
+            # Read boot message
+            boot_msg = self._read_line()
+            if "G4_GOVERNOR_READY" in boot_msg:
+                logger.info("✅ Teensy G4 Governor connected and ready")
+            else:
+                logger.warning(f"Unexpected boot message: {boot_msg}")
+                
+        except serial.SerialException as e:
+            raise HardwareGovernorError(f"Failed to connect to Teensy on {self.port}: {e}")
+    
+    def _write_command(self, command: str) -> None:
+        """Write command with newline."""
+        if not self.serial:
+            raise HardwareGovernorError("Serial connection not established")
+        self.serial.write(f"{command}\n".encode())
+        logger.debug(f"→ Sent: {command}")
+    
+    def _read_line(self) -> str:
+        """Read line from serial (strip newline)."""
+        if not self.serial:
+            raise HardwareGovernorError("Serial connection not established")
+        line = self.serial.readline().decode('utf-8', errors='ignore').strip()
+        if line:
+            logger.debug(f"← Received: {line}")
+        return line
+    
+    def _maybe_send_heartbeat(self) -> None:
+        """Send heartbeat if needed to prevent watchdog timeout."""
+        now = time.time()
+        if now - self.last_heartbeat > self.heartbeat_interval:
+            self._write_command("HEARTBEAT")
+            self.last_heartbeat = now
+    
+    def request_motor_speed(self, speed: int) -> bool:
+        """
+        Request motor speed (0-255 PWM).
+        
+        Returns:
+            True if Teensy approved and set the speed
+            False if vetoed
+        """
+        if not 0 <= speed <= 255:
+            logger.warning(f"Invalid speed request: {speed} (must be 0-255)")
+            return False
+        
+        self._maybe_send_heartbeat()
+        self._write_command(f"MOTOR {speed}")
+        
+        # Read response
+        response = self._read_line()
+        
+        if "MOTOR_SET" in response or "OK" in response:
+            logger.info(f"✅ Motor speed {speed} approved by hardware")
+            return True
+        elif "VETO" in response:
+            logger.warning(f"❌ Hardware veto: {response}")
+            return False
+        else:
+            logger.error(f"Unexpected response: {response}")
+            return False
+    
+    def get_status(self) -> Dict[str, Any]:
+        """Request and parse hardware status."""
+        self._maybe_send_heartbeat()
+        self._write_command("STATUS")
+        
+        response = self._read_line()
+        if not response.startswith("STATUS:"):
+            logger.warning(f"Invalid status response: {response}")
+            return {}
+        
+        # Parse: "STATUS: enabled=1 speed=128 current=1500mA"
+        status = {}
+        parts = response[7:].strip().split()
+        for part in parts:
+            if "=" in part:
+                k, v = part.split("=", 1)
+                # Try to convert to appropriate type
+                if v.replace('.', '', 1).isdigit():  # int or float
+                    status[k] = float(v) if '.' in v else int(v)
+                elif v.endswith('mA'):  # Current in mA
+                    status[k] = float(v[:-2])
+                elif v in ['0', '1', 'true', 'false']:  # Boolean
+                    status[k] = v in ['1', 'true']
+                else:
+                    status[k] = v
+        
+        logger.info(f"Hardware status: {status}")
+        return status
+    
+    def emergency_stop(self) -> None:
+        """Software-triggered emergency stop request."""
+        self._write_command("ESTOP")
+        logger.warning("🛑 Software emergency stop requested")
+    
+    def reset_estop(self) -> None:
+        """Reset E-stop latch after physical button reset."""
+        self._write_command("RESET")
+        logger.info("E-stop latch reset")
+    
+    def send_heartbeat(self) -> None:
+        """Explicit heartbeat (useful for testing)."""
+        self._write_command("HEARTBEAT")
+        self.last_heartbeat = time.time()
+        logger.debug("Heartbeat sent")
+    
+    def close(self) -> None:
+        """Safely close connection — stop motor first."""
+        if self.serial:
+            try:
+                self.request_motor_speed(0)  # Ensure motor stopped
+                time.sleep(0.1)
+                self.serial.close()
+                logger.info("Hardware interface closed")
+            except Exception as e:
+                logger.error(f"Error during close: {e}")
+            finally:
+                self.serial = None
+    
+    def __enter__(self):
+        """Context manager entry."""
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Context manager exit - auto close."""
+        self.close()
+
+# Enhanced test with context manager
+if __name__ == "__main__":
+    try:
+        with HardwareGovernor() as gov:
+            # Test sequence
+            print("Initial status:", gov.get_status())
+            
+            # Test safe speed
+            print("Requesting motor speed 100...")
+            if gov.request_motor_speed(100):
+                print("✅ Speed approved")
+                time.sleep(2)
+            else:
+                print("❌ Speed vetoed")
+            
+            # Test stop
+            print("Requesting motor speed 0...")
+            gov.request_motor_speed(0)
+            
+            # Final status
+            print("Final status:", gov.get_status())
+            
+    except HardwareGovernorError as e:
+        print(f"❌ Hardware error: {e}")
+    except Exception as e:
+        print(f"❌ Unexpected error: {e}")
