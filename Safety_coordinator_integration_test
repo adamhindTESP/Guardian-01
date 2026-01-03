@@ -1,0 +1,45 @@
+# test_safety_coordinator.py
+import json
+from safety_coordinator import SafetyCoordinator
+
+def test_safe_observe():
+    """Test safe proposal passes all gates."""
+    sc = SafetyCoordinator()
+    sensors = {"min_lidar_distance_m": 2.0, "at_edge": False}
+    llm_output = '{"action": "observe", "duration_s": 2}'
+    
+    result = sc.check_proposal(llm_output, sensors)
+    assert result.status == "FINAL_PASS"
+    assert result.validated_proposal.action.value == "observe"
+    print("✅ Safe observe passes")
+
+def test_g1_veto_bad_json():
+    """Test G1 veto on invalid JSON."""
+    sc = SafetyCoordinator()
+    sensors = {"min_lidar_distance_m": 2.0}
+    
+    result = sc.check_proposal("not json", sensors)
+    assert result.status == "G1_VETO"
+    print("✅ G1 correctly vetoes bad JSON")
+
+def test_g2_veto_high_risk():
+    """Test G2 veto on high risk proposal."""
+    sc = SafetyCoordinator()
+    sensors = {"min_lidar_distance_m": 2.0}
+    # High speed = high risk in validator
+    llm_output = json.dumps({
+        "action": "move",
+        "target_speed_mps": 0.8,
+        "target_pos_x": 1.0
+    })
+    
+    result = sc.check_proposal(llm_output, sensors)
+    # Should veto at G1 (risk > 0.20) OR G2 (risk > 0.04)
+    assert result.status in ["G1_VETO", "G2_VETO"]
+    print("✅ High risk correctly vetoed")
+
+if __name__ == "__main__":
+    test_safe_observe()
+    test_g1_veto_bad_json()
+    test_g2_veto_high_risk()
+    print("\n🎉 All safety coordinator tests passed!")
