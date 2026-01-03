@@ -398,7 +398,7 @@
   "goals": [
     { "action": "navigate", "target": { "kind": "location", "id": "front_door" } },
     { "action": "observe", "target": { "kind": "area", "id": "door_area" } },
-    { "action": "wait", "duration_s": 60 },   ← ❌ THIS LINE
+    { "action": "wait", "duration_s": 60 },
     { "action": "observe", "target": { "kind": "area", "id": "door_area" } },
     { "action": "speak", "text": "Periodic door check complete. All appears secure." }
   ],
