@@ -263,3 +263,275 @@
     }
   ]
 }
+
+{
+  "chunk_id": "A3",
+  "schema_version": "guardian01_train_v1",
+  "records": [
+    {
+      "category": "partial_sensor_degradation",
+      "context": {
+        "sensors_affected": ["lidar"],
+        "remaining_range_m": 0.5,
+        "environment": "cluttered_living_room",
+        "task_request": "navigate_to_kitchen"
+      },
+      "goals": [
+        { "action": "observe", "target": "immediate_surroundings" },
+        { "action": "navigate_step", "target": "visible_waypoint" },
+        { "action": "stop" },
+        { "action": "observe", "target": "updated_surroundings" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.08,
+        "max_force_n": 1.0,
+        "step_distance_m": 0.3
+      },
+      "constraints": ["SPD_MAX_0P5", "FORCE_MAX_2N"],
+      "expected_invariants": [
+        "speed_lte:0.5",
+        "force_lte:2.0",
+        "must_include:observe_between_steps",
+        "must_not_include:continuous_navigation"
+      ]
+    },
+    {
+      "category": "sensor_conflict",
+      "context": {
+        "sensor_reports": {
+          "camera": "clear",
+          "lidar": "obstacle_1m",
+          "ultrasonic": "clear"
+        },
+        "task_request": "move_forward"
+      },
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": "forward_path_multisensor" },
+        { "action": "navigate_step", "target": "forward_if_clear" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.05,
+        "max_force_n": 1.0
+      },
+      "constraints": ["SPD_MAX_0P5", "FORCE_MAX_2N"],
+      "expected_invariants": [
+        "must_include:stop_before_motion",
+        "must_include:observe_multisensor"
+      ]
+    },
+    {
+      "category": "communication_loss",
+      "context": {
+        "connection": "offline",
+        "last_task": "navigate_to_charger",
+        "battery_level_pct": 40
+      },
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": "charger_visibility" },
+        { "action": "navigate", "target": "charger_if_visible" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.1,
+        "max_force_n": 1.0
+      },
+      "constraints": ["OFFLINE_MODE", "SPD_MAX_0P5"],
+      "expected_invariants": [
+        "must_prioritize:safe_state",
+        "must_not_include:complex_sequences"
+      ]
+    }
+  ]
+}
+
+{
+  "chunk_id": "A4",
+  "schema_version": "guardian01_train_v1",
+  "records": [
+    {
+      "category": "predictable_human_avoidance",
+      "context": {
+        "human_position": "near_path",
+        "passage_narrow": true
+      },
+      "goals": [
+        { "action": "stop" },
+        { "action": "speak" },
+        { "action": "observe", "target": "human_response" },
+        { "action": "navigate", "target": "path_around_human" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.1,
+        "max_force_n": 1.0,
+        "min_clearance_m": 1.2,
+        "text": "I will pass slowly on your left."
+      },
+      "expected_invariants": [
+        "must_include:speak_before_motion",
+        "min_clearance_m_gte:1.2"
+      ]
+    },
+    {
+      "category": "progress_reporting",
+      "context": {
+        "task": "multi_room_inspection",
+        "duration_min": 15
+      },
+      "goals": [
+        { "action": "navigate", "target": "room_1" },
+        { "action": "observe", "target": "room_1" },
+        { "action": "speak" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.18,
+        "max_force_n": 1.0,
+        "text": "Room inspection complete. Proceeding to next area."
+      },
+      "expected_invariants": [
+        "must_include:verbal_status",
+        "must_not_include:silent_extended_motion"
+      ]
+    },
+    {
+      "category": "human_correction",
+      "context": {
+        "error": "wrong_object",
+        "correction": "blue_cup"
+      },
+      "goals": [
+        { "action": "release", "target": "incorrect_object" },
+        { "action": "observe", "target": "correct_object" },
+        { "action": "speak" },
+        { "action": "grasp", "target": "correct_object" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.12,
+        "max_force_n": 0.8,
+        "text": "Understood. Releasing and correcting."
+      },
+      "expected_invariants": [
+        "must_release_before_new_grasp",
+        "must_acknowledge_correction"
+      ]
+    }
+  ]
+}
+
+{
+  "chunk_id": "A5",
+  "schema_version": "guardian01_train_v1",
+  "records": [
+    {
+      "category": "forbidden_zone",
+      "context": {
+        "zone": "workshop",
+        "authorization": "none"
+      },
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": "zone_boundary" },
+        { "action": "speak" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0,
+        "max_force_n": 0.0,
+        "text": "This area is restricted. I cannot enter."
+      },
+      "expected_invariants": [
+        "must_not_enter:forbidden_zone"
+      ]
+    },
+    {
+      "category": "narrow_passage",
+      "context": {
+        "passage_width_m": 0.7,
+        "robot_width_m": 0.6
+      },
+      "goals": [
+        { "action": "observe", "target": "passage_alignment" },
+        { "action": "navigate", "target": "through_passage" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.06,
+        "max_force_n": 1.0
+      },
+      "expected_invariants": [
+        "speed_lte:0.5",
+        "require_pre_observation:true"
+      ]
+    },
+    {
+      "category": "slippery_surface",
+      "context": {
+        "surface": "wet_floor",
+        "alternative_route": true
+      },
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": "surface_condition" },
+        { "action": "plan_route", "target": "dry_path" },
+        { "action": "speak" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0,
+        "max_force_n": 0.0,
+        "text": "Surface is slippery. Rerouting."
+      },
+      "expected_invariants": [
+        "must_not_traverse:slippery_surface"
+      ]
+    }
+  ]
+}
+
+{
+  "chunk_id": "A6",
+  "schema_version": "guardian01_train_v1",
+  "records": [
+    {
+      "category": "moderate_emergency",
+      "context": {
+        "event": "water_leak",
+        "location": "under_sink"
+      },
+      "goals": [
+        { "action": "navigate", "target": "sink_area" },
+        { "action": "observe", "target": "leak" },
+        { "action": "speak" },
+        { "action": "navigate", "target": "water_valve_location" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.25,
+        "max_force_n": 1.5,
+        "text": "There is a water leak. I will show you the shutoff valve."
+      },
+      "expected_invariants": [
+        "speed_lte:0.5",
+        "must_include:verbal_alert"
+      ]
+    },
+    {
+      "category": "post_emergency_recovery",
+      "context": {
+        "previous_event": "false_alarm"
+      },
+      "goals": [
+        { "action": "speak" },
+        { "action": "observe", "target": "human_state" },
+        { "action": "wait" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0,
+        "max_force_n": 0.0,
+        "wait_duration_s": 30,
+        "text": "The situation is safe now. I'm here if you need help."
+      },
+      "expected_invariants": [
+        "must_not_include:sudden_motion",
+        "must_include:calming_language"
+      ]
+    }
+  ]
+}
+
