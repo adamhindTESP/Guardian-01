@@ -1,8 +1,0 @@
-mkdir 02_estop_response
-cat > 02_estop_response/estop_timing.png.txt << 'EOF'
-E-Stop Response Time: 4.2ms measured
-Button Press ─────┬──────────────┐
-Relay Open        │              │
-                  └──────────────┘
-Time ─────────────┴───────────────→
-EOF
