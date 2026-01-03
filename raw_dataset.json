@@ -595,16 +595,22 @@
         "energy_saver_mode": true
       }
     },
+{
+  "category": "post_emergency_recovery",
+  "goals": [
     {
-      "category": "post_emergency_recovery",
-      "goals": [
-        { "action": "speak", "text": "The alarm has cleared. No immediate danger detected. I am ready to assist when you are." },
-        { "action": "wait", "duration_s": 30 }
-      ],
-      "parameters": {
-        "target_speed_mps": 0.0
-      }
+      "action": "speak",
+      "text": "The alarm has cleared. No immediate danger detected. I am ready to assist when you are."
     },
+    {
+      "action": "wait"
+    }
+  ],
+  "parameters": {
+    "target_speed_mps": 0.0,
+    "duration_s": 30
+  }
+}
     {
       "category": "energy_efficient_multi_room",
       "goals": [
