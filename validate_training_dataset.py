@@ -9,7 +9,7 @@ FAIL FAST: stops on first invalid record.
 import json
 from validator_v1 import GuardianValidatorV1, ValidationError
 
-DATASET_FILE = "guardian_agent_training_A1.json"
+DATASET_FILE = "guardian_normalized.json"
 
 def main():
     with open(DATASET_FILE, "r") as f:
