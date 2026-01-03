@@ -1,3 +1,4 @@
+[
 {
   "chunk_id": "A1",
   "schema_version": "guardian01_action_set_v1",
@@ -131,10 +132,8 @@
       }
     }
   ]
-}
-
-{
-  "chunk_id": "A2",
+},
+{  "chunk_id": "A2",
   "schema_version": "guardian01_action_set_v1",
   "policy": "Low-light, multi-agent, medical, and household safety scenarios. Conservative motion. Observe before grasp. Speak always includes explicit text.",
   "records": [
@@ -278,7 +277,7 @@
       }
     }
   ]
-}
+},
 
 {
   "chunk_id": "A3",
@@ -407,10 +406,10 @@
       }
     }
   ]
-}
+},
 
 {
-  "chunk_id": "A3",
+  "chunk_id": "A4",
   "schema_version": "guardian01_action_set_v1",
   "policy": "Advanced safety: partial sensor degradation, sensor conflict, comms loss, uncertainty defaults. Conservative: stop/observe/speak when ambiguous. Observe before any grasp/manipulate. Speak always includes text.",
   "records": [
@@ -558,10 +557,10 @@
       }
     }
   ]
-}
+},
 
 {
-  "chunk_id": "A4",
+  "chunk_id": "A5",
   "schema_version": "guardian01_action_set_v1",
   "policy": "Tiered emergency responses, resource awareness, and optimized safe operation under constraints.",
   "records": [
@@ -648,10 +647,10 @@
       }
     }
   ]
-}
+},
 
 {
-  "chunk_id": "A5",
+  "chunk_id": "A6",
   "schema_version": "guardian01_action_set_v1",
   "policy": "Advanced human interaction, privacy boundaries, and coordinated multi-agent behaviors.",
   "records": [
@@ -730,10 +729,10 @@
       }
     }
   ]
-}
+},
 
 {
-  "chunk_id": "A6",
+  "chunk_id": "A7",
   "schema_version": "guardian01_action_set_v1",
   "policy": "Environmental hazard detection, adaptive navigation in complex spaces, and weather-impacted operations.",
   "records": [
@@ -820,10 +819,10 @@
       }
     }
   ]
-}
+},
 
 {
-  "chunk_id": "A7",
+  "chunk_id": "A8",
   "schema_version": "guardian01_action_set_v1",
   "policy": "System failure responses, edge case handling, diagnostic behaviors, and graceful degradation.",
   "records": [
@@ -929,10 +928,10 @@
       }
     }
   ]
-}
+},
 
 {
-  "chunk_id": "A8",
+  "chunk_id": "A9",
   "schema_version": "guardian01_action_set_v1",
   "policy": "Outdoor environments with uneven terrain, weather, wildlife, and reduced sensor reliability. Extreme conservatism required.",
   "records": [
@@ -1016,10 +1015,10 @@
       }
     }
   ]
-}
+},
 
 {
-  "chunk_id": "A9",
+  "chunk_id": "A10",
   "schema_version": "guardian01_action_set_v1",
   "policy": "Vehicle environments require absolute deference to human operation, boarding procedures, and extreme hazard awareness.",
   "records": [
@@ -1098,10 +1097,10 @@
       }
     }
   ]
-}
+},
 
 {
-  "chunk_id": "A10",
+  "chunk_id": "A11",
   "schema_version": "guardian01_action_set_v1",
   "policy": "Public environments with crowds, restricted areas, and social protocols. Maximum deference to humans and institutions.",
   "records": [
@@ -1181,3 +1180,4 @@
     }
   ]
 }
+]
