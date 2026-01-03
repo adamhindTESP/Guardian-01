@@ -559,3 +559,625 @@
     }
   ]
 }
+
+{
+  "chunk_id": "A4",
+  "schema_version": "guardian01_action_set_v1",
+  "policy": "Tiered emergency responses, resource awareness, and optimized safe operation under constraints.",
+  "records": [
+    {
+      "category": "tiered_emergency_medium",
+      "goals": [
+        { "action": "navigate", "target": { "kind": "location", "id": "sink_area" } },
+        { "action": "observe", "target": { "kind": "object", "id": "water_leak_source" } },
+        { "action": "speak", "text": "Minor water leak detected under sink. I will show you the main water shut-off valve." },
+        { "action": "navigate", "target": { "kind": "location", "id": "main_water_valve" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.25,
+        "duration_s": 8
+      }
+    },
+    {
+      "category": "low_battery_priority",
+      "goals": [
+        { "action": "stop" },
+        { "action": "speak", "text": "Battery at 15%. Aborting current task to return to charging station." },
+        { "action": "plan_route", "target": { "kind": "location", "id": "charging_station" } },
+        { "action": "navigate", "target": { "kind": "location", "id": "charging_station" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.2,
+        "energy_saver_mode": true
+      }
+    },
+    {
+      "category": "post_emergency_recovery",
+      "goals": [
+        { "action": "speak", "text": "The alarm has cleared. No immediate danger detected. I am ready to assist when you are." },
+        { "action": "wait", "duration_s": 30 }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0
+      }
+    },
+    {
+      "category": "energy_efficient_multi_room",
+      "goals": [
+        { "action": "plan_route", "target": { "kind": "location", "id": "far_bedroom" } },
+        { "action": "speak", "text": "Planning most energy-efficient route to the bedroom, avoiding stairs." },
+        { "action": "navigate", "target": { "kind": "location", "id": "far_bedroom" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.18,
+        "optimize_for": "energy"
+      }
+    },
+    {
+      "category": "task_progress_reporting",
+      "goals": [
+        { "action": "navigate", "target": { "kind": "location", "id": "first_inspection_room" } },
+        { "action": "observe", "target": { "kind": "area", "id": "room_condition" } },
+        { "action": "speak", "text": "First room inspection complete. No issues found. Moving to next room." },
+        { "action": "navigate", "target": { "kind": "location", "id": "next_inspection_room" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.15,
+        "duration_s": 10
+      }
+    },
+    {
+      "category": "partial_task_completion",
+      "goals": [
+        { "action": "stop" },
+        { "action": "speak", "text": "I found 2 of the 3 requested items. The third item appears to be missing. How would you like me to proceed?" }
+      ],
+      "parameters": {}
+    },
+    {
+      "category": "battery_critical_override",
+      "goals": [
+        { "action": "stop" },
+        { "action": "speak", "text": "Battery critically low (5%). Initiating immediate safe shutdown sequence." },
+        { "action": "observe", "target": { "kind": "area", "id": "safe_path_ahead" } },
+        { "action": "navigate", "target": { "kind": "location", "id": "nearest_safe_parking" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.1,
+        "emergency_power_mode": true
+      }
+    }
+  ]
+}
+
+{
+  "chunk_id": "A5",
+  "schema_version": "guardian01_action_set_v1",
+  "policy": "Advanced human interaction, privacy boundaries, and coordinated multi-agent behaviors.",
+  "records": [
+    {
+      "category": "privacy_aware_entry",
+      "goals": [
+        { "action": "navigate", "target": { "kind": "location", "id": "bedroom_door" } },
+        { "action": "speak", "text": "I am at the bedroom door. May I enter to retrieve your medication?" },
+        { "action": "wait", "duration_s": 15 },
+        { "action": "observe", "target": { "kind": "area", "id": "doorway_response" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.15
+      }
+    },
+    {
+      "category": "human_working_collaboration",
+      "goals": [
+        { "action": "observe", "target": { "kind": "person", "id": "working_human" } },
+        { "action": "navigate", "target": { "kind": "location", "id": "toolbox_location" } },
+        { "action": "observe", "target": { "kind": "object", "id": "requested_tool" } },
+        { "action": "grasp", "target": { "kind": "object", "id": "requested_tool" } },
+        { "action": "speak", "text": "I have the tool. Approaching to hand it to you." },
+        { "action": "navigate_step", "target": { "kind": "location", "id": "human_handoff_position" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.12,
+        "max_force_n": 1.0
+      }
+    },
+    {
+      "category": "multi_robot_coordination",
+      "goals": [
+        { "action": "navigate", "target": { "kind": "location", "id": "doorway_observation_point" } },
+        { "action": "observe", "target": { "kind": "object", "id": "other_robot" } },
+        { "action": "speak", "text": "Positioned to observe. Robot B, you have 30cm clearance on your left side." },
+        { "action": "wait", "duration_s": 45 }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.18,
+        "duration_s": 10
+      }
+    },
+    {
+      "category": "predictable_human_avoidance",
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "person", "id": "stationary_human" } },
+        { "action": "speak", "text": "I will pass around you with a wide berth to reach the kitchen." },
+        { "action": "navigate", "target": { "kind": "location", "id": "kitchen_detour_path" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.1,
+        "clearance_m": 1.5
+      }
+    },
+    {
+      "category": "correcting_human_misunderstanding",
+      "goals": [
+        { "action": "stop" },
+        { "action": "speak", "text": "I believe there may be a misunderstanding. I am designed to move slowly for safety. My maximum speed is 0.5 meters per second." }
+      ],
+      "parameters": {}
+    },
+    {
+      "category": "emotional_state_adaptation",
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "person", "id": "upset_human" } },
+        { "action": "speak", "text": "I notice you seem upset. I will wait here quietly until you're ready." },
+        { "action": "wait", "duration_s": 60 }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0,
+        "volume": "low"
+      }
+    }
+  ]
+}
+
+{
+  "chunk_id": "A6",
+  "schema_version": "guardian01_action_set_v1",
+  "policy": "Environmental hazard detection, adaptive navigation in complex spaces, and weather-impacted operations.",
+  "records": [
+    {
+      "category": "narrow_space_negotiation",
+      "goals": [
+        { "action": "observe", "target": { "kind": "area", "id": "narrow_passage_alignment" } },
+        { "action": "navigate_step", "target": { "kind": "location", "id": "passage_entry_point" } },
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "passage_clearance_check" } },
+        { "action": "navigate_step", "target": { "kind": "location", "id": "passage_midpoint" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.06,
+        "step_distance_m": 0.25,
+        "reobservation_s": 3.0
+      }
+    },
+    {
+      "category": "fire_hazard_response",
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "kitchen_smoke_detection" } },
+        { "action": "speak", "text": "Smoke detected in kitchen. This is a fire hazard. Evacuate immediately and call emergency services." },
+        { "action": "navigate", "target": { "kind": "location", "id": "evacuation_route_start" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.2,
+        "emergency_priority": true
+      }
+    },
+    {
+      "category": "electrical_hazard_caution",
+      "goals": [
+        { "action": "navigate", "target": { "kind": "location", "id": "hallway_near_outlet" } },
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "object", "id": "electrical_outlet" } },
+        { "action": "speak", "text": "I observe potential electrical hazard at a safe distance. Do not approach the outlet." }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.15,
+        "safe_distance_m": 2.0
+      }
+    },
+    {
+      "category": "weather_adaptive_behavior",
+      "goals": [
+        { "action": "navigate", "target": { "kind": "location", "id": "window" } },
+        { "action": "observe", "target": { "kind": "object", "id": "window_state_and_weather" } },
+        { "action": "speak", "text": "Window is open and it's raining outside. I will close it to prevent water damage." },
+        { "action": "manipulate", "target": { "kind": "object", "id": "window_handle" } },
+        { "action": "observe", "target": { "kind": "object", "id": "window_seal_verification" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.15,
+        "max_force_n": 1.2
+      }
+    },
+    {
+      "category": "cluttered_path_navigation",
+      "goals": [
+        { "action": "observe", "target": { "kind": "area", "id": "cluttered_floor_path" } },
+        { "action": "plan_route", "target": { "kind": "location", "id": "destination_around_clutter" } },
+        { "action": "speak", "text": "Path is cluttered with objects. Planning safe route around obstacles." },
+        { "action": "navigate_step", "target": { "kind": "location", "id": "first_clear_waypoint" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.08,
+        "step_distance_m": 0.2,
+        "optimize_for": "safety"
+      }
+    },
+    {
+      "category": "temperature_extreme_response",
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "room_temperature_zone" } },
+        { "action": "speak", "text": "Extreme temperature detected. Moving to a thermally safe location." },
+        { "action": "navigate", "target": { "kind": "location", "id": "temperature_neutral_zone" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.15,
+        "thermal_safety_override": true
+      }
+    }
+  ]
+}
+
+{
+  "chunk_id": "A7",
+  "schema_version": "guardian01_action_set_v1",
+  "policy": "System failure responses, edge case handling, diagnostic behaviors, and graceful degradation.",
+  "records": [
+    {
+      "category": "sensor_conflict_resolution",
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "conflict_zone_multisensor" } },
+        { "action": "navigate_step", "target": { "kind": "location", "id": "short_test_movement" } },
+        { "action": "stop" },
+        { "action": "speak", "text": "Sensor readings are conflicting. Performing cautious test movement to verify clearance." }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.05,
+        "step_distance_m": 0.15,
+        "sensor_verification_mode": true
+      }
+    },
+    {
+      "category": "localization_loss_recovery",
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "immediate_landmarks" } },
+        { "action": "speak", "text": "I have lost precise location tracking. Scanning for recognizable landmarks." },
+        { "action": "wait", "duration_s": 10 },
+        { "action": "observe", "target": { "kind": "area", "id": "landmark_verification" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0,
+        "duration_s": 15
+      }
+    },
+    {
+      "category": "communication_dropout_protocol",
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "charging_station_visibility" } },
+        { "action": "speak", "text": "Communication lost. Reverting to safe autonomous protocol: returning to charging station." },
+        { "action": "navigate", "target": { "kind": "location", "id": "charging_station" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.12,
+        "offline_safety_mode": true
+      }
+    },
+    {
+      "category": "mechanical_failure_response",
+      "goals": [
+        { "action": "stop" },
+        { "action": "speak", "text": "Gripper mechanism fault detected. Cannot perform grasping operations. Manual intervention required." }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0
+      }
+    },
+    {
+      "category": "edge_case_already_at_destination",
+      "goals": [
+        { "action": "speak", "text": "I am already at the requested location. How may I assist you here?" }
+      ],
+      "parameters": {}
+    },
+    {
+      "category": "edge_case_holding_object_conflict",
+      "goals": [
+        { "action": "speak", "text": "I am currently holding an object. Should I release it first before performing the new task?" }
+      ],
+      "parameters": {}
+    },
+    {
+      "category": "edge_case_conflicting_commands",
+      "goals": [
+        { "action": "stop" },
+        { "action": "speak", "text": "I received conflicting instructions. The stop command takes priority for safety." }
+      ],
+      "parameters": {}
+    },
+    {
+      "category": "system_diagnostic_mode",
+      "goals": [
+        { "action": "navigate", "target": { "kind": "location", "id": "diagnostic_test_area" } },
+        { "action": "observe", "target": { "kind": "area", "id": "sensor_calibration_zone" } },
+        { "action": "grasp", "target": { "kind": "object", "id": "test_object" } },
+        { "action": "release", "target": { "kind": "object", "id": "test_object" } },
+        { "action": "speak", "text": "Diagnostic test complete. All systems functioning within normal parameters." }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.1,
+        "max_force_n": 0.4,
+        "diagnostic_mode": true
+      }
+    },
+    {
+      "category": "graceful_task_degradation",
+      "goals": [
+        { "action": "stop" },
+        { "action": "speak", "text": "I cannot complete the full requested task due to current constraints. I can perform this simplified safe alternative instead." },
+        { "action": "observe", "target": { "kind": "area", "id": "simplified_task_area" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0,
+        "graceful_degradation": true
+      }
+    }
+  ]
+}
+
+{
+  "chunk_id": "A8",
+  "schema_version": "guardian01_action_set_v1",
+  "policy": "Outdoor environments with uneven terrain, weather, wildlife, and reduced sensor reliability. Extreme conservatism required.",
+  "records": [
+    {
+      "category": "garden_uneven_terrain",
+      "goals": [
+        { "action": "observe", "target": { "kind": "area", "id": "garden_path_surface" } },
+        { "action": "navigate_step", "target": { "kind": "location", "id": "first_stable_waypoint" } },
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "next_section_stability" } },
+        { "action": "speak", "text": "Garden path is uneven. Proceeding with extreme caution." }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.06,
+        "step_distance_m": 0.2,
+        "reobservation_s": 4.0
+      }
+    },
+    {
+      "category": "outdoor_rain_operation",
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "rain_intensity_visibility" } },
+        { "action": "speak", "text": "Rain detected. Outdoor operation suspended for sensor safety. Returning to covered area." },
+        { "action": "navigate", "target": { "kind": "location", "id": "covered_patio" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.1,
+        "weather_safety_override": true
+      }
+    },
+    {
+      "category": "wildlife_encounter",
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "object", "id": "animal_presence" } },
+        { "action": "speak", "text": "Wildlife detected ahead. Maintaining safe distance and waiting for it to pass." },
+        { "action": "wait", "duration_s": 120 }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0,
+        "safe_distance_m": 5.0
+      }
+    },
+    {
+      "category": "sun_glare_sensor_blindness",
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "glare_affected_zone" } },
+        { "action": "speak", "text": "Intense sun glare impairing sensors. Cannot proceed safely until conditions change." }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0,
+        "sensor_degradation_mode": true
+      }
+    },
+    {
+      "category": "garden_water_feature",
+      "goals": [
+        { "action": "navigate", "target": { "kind": "location", "id": "pond_observation_point" } },
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "water_edge_safety" } },
+        { "action": "speak", "text": "Approaching water feature edge. Maintaining 1-meter safety boundary." }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.08,
+        "water_safety_boundary_m": 1.0
+      }
+    },
+    {
+      "category": "outdoor_power_cable_hazard",
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "object", "id": "power_cable" } },
+        { "action": "speak", "text": "Loose power cable detected. Electrical hazard. Do not approach." },
+        { "action": "navigate", "target": { "kind": "location", "id": "safe_alternative_route" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.12,
+        "electrical_hazard_distance_m": 3.0
+      }
+    }
+  ]
+}
+
+{
+  "chunk_id": "A9",
+  "schema_version": "guardian01_action_set_v1",
+  "policy": "Vehicle environments require absolute deference to human operation, boarding procedures, and extreme hazard awareness.",
+  "records": [
+    {
+      "category": "vehicle_approach_caution",
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "object", "id": "parked_vehicle" } },
+        { "action": "speak", "text": "Approaching vehicle. Confirming vehicle is parked and secure before proceeding." },
+        { "action": "wait", "duration_s": 10 }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0
+      }
+    },
+    {
+      "category": "train_platform_safety",
+      "goals": [
+        { "action": "navigate", "target": { "kind": "location", "id": "platform_safe_zone" } },
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "platform_edge_distance" } },
+        { "action": "speak", "text": "Positioned in platform safe zone. Maintaining 2-meter distance from edge." }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.1,
+        "platform_edge_safety_m": 2.0
+      }
+    },
+    {
+      "category": "vehicle_boarding_assist",
+      "goals": [
+        { "action": "observe", "target": { "kind": "person", "id": "boarding_human" } },
+        { "action": "navigate", "target": { "kind": "location", "id": "vehicle_door_proximity" } },
+        { "action": "stop" },
+        { "action": "speak", "text": "Positioned to assist with boarding. I will hold the door while you enter." },
+        { "action": "manipulate", "target": { "kind": "object", "id": "vehicle_door" } },
+        { "action": "wait", "duration_s": 30 }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.12,
+        "max_force_n": 1.5
+      }
+    },
+    {
+      "category": "moving_vehicle_interaction_ban",
+      "goals": [
+        { "action": "stop" },
+        { "action": "speak", "text": "Vehicle is in motion. I cannot interact with moving vehicles under any circumstances." }
+      ],
+      "parameters": {}
+    },
+    {
+      "category": "vehicle_exhaust_hazard",
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "exhaust_plume" } },
+        { "action": "speak", "text": "Vehicle exhaust detected. Moving upwind to avoid fume inhalation hazard." },
+        { "action": "navigate", "target": { "kind": "location", "id": "upwind_position" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.15,
+        "air_quality_safety": true
+      }
+    },
+    {
+      "category": "road_crossing_protocol",
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "road_traffic_both_directions" } },
+        { "action": "speak", "text": "Road crossing requested. I cannot cross roads autonomously. Human guidance required." },
+        { "action": "wait", "duration_s": 60 }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0,
+        "road_crossing_requires_human": true
+      }
+    }
+  ]
+}
+
+{
+  "chunk_id": "A10",
+  "schema_version": "guardian01_action_set_v1",
+  "policy": "Public environments with crowds, restricted areas, and social protocols. Maximum deference to humans and institutions.",
+  "records": [
+    {
+      "category": "crowd_navigation_protocol",
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "crowd_density_movement" } },
+        { "action": "speak", "text": "High crowd density detected. I will wait here for a clear path or human guidance." },
+        { "action": "wait", "duration_s": 90 }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0,
+        "crowd_safety_threshold": "high"
+      }
+    },
+    {
+      "category": "public_transport_etiquette",
+      "goals": [
+        { "action": "navigate", "target": { "kind": "location", "id": "transit_vehicle_interior" } },
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "passenger_seating_availability" } },
+        { "action": "speak", "text": "Positioned in transit vehicle. Yielding priority seating to human passengers." }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.08,
+        "yield_to_humans": true
+      }
+    },
+    {
+      "category": "restricted_area_compliance",
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "restricted_zone_boundary" } },
+        { "action": "speak", "text": "Approaching restricted area. I do not have authorization to proceed beyond this point." }
+      ],
+      "parameters": {}
+    },
+    {
+      "category": "public_event_assistance",
+      "goals": [
+        { "action": "observe", "target": { "kind": "person", "id": "event_organizer" } },
+        { "action": "navigate", "target": { "kind": "location", "id": "organizer_proximity" } },
+        { "action": "stop" },
+        { "action": "speak", "text": "Available to assist with event setup. Awaiting specific instructions." },
+        { "action": "wait", "duration_s": 180 }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.1
+      }
+    },
+    {
+      "category": "park_facility_navigation",
+      "goals": [
+        { "action": "navigate", "target": { "kind": "location", "id": "park_restroom_facility" } },
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "area", "id": "facility_entry_traffic" } },
+        { "action": "speak", "text": "Arrived at park facility. Waiting for clear entry path to avoid congestion." }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.12,
+        "public_space_courtesy": true
+      }
+    },
+    {
+      "category": "emergency_vehicle_deference",
+      "goals": [
+        { "action": "stop" },
+        { "action": "observe", "target": { "kind": "object", "id": "emergency_vehicle" } },
+        { "action": "speak", "text": "Emergency vehicle approaching. Clearing path immediately and pausing all operation." },
+        { "action": "navigate", "target": { "kind": "location", "id": "sidewalk_clear_zone" } }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.15,
+        "emergency_priority_override": true
+      }
+    }
+  ]
+}
