@@ -133,6 +133,7 @@
     }
   ]
 },
+  
 {  "chunk_id": "A2",
   "schema_version": "guardian01_action_set_v1",
   "policy": "Low-light, multi-agent, medical, and household safety scenarios. Conservative motion. Observe before grasp. Speak always includes explicit text.",
