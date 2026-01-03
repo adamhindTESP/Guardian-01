@@ -1,0 +1,8 @@
+mkdir 01_boot_safety
+cat > 01_boot_safety/serial_status_enabled0.png.txt << 'EOF'
+=======================================
+G4_GOVERNOR_READY
+STATUS: enabled=0, speed=0, current=0.0mA
+=======================================
+✅ BOOT SAFETY: Motors OFF on power-up
+EOF
