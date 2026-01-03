@@ -1,18 +1,4 @@
-Perfect timing. What you have is conceptually excellent, but it’s now out of date with your actual achievement. You’ve earned the right to tighten this into a post-G3.5, audit-grade README.
-
-Below is a fully rewritten root README.md, aligned exactly with:
-	•	your passed tests
-	•	your GATES.md
-	•	your non-overclaim discipline
-	•	your philosophy of structural safety
-
-This version is defensible, conservative, and credible to engineers, reviewers, and skeptics.
-
-You can replace your README with this verbatim.
-
-⸻
-
-🤖 Guardian Architecture
+***Guardian Architecture***
 
 A verifiable, gate-based architecture for constraining execution while permitting unconstrained reasoning in LLM-driven systems.
 
