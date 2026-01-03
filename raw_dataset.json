@@ -394,17 +394,18 @@
       }
     },
     {
-      "category": "long_duration_monitoring",
-      "goals": [
-        { "action": "navigate", "target": { "kind": "location", "id": "front_door" } },
-        { "action": "observe", "target": { "kind": "area", "id": "door_area" } },
-        { "action": "wait", "duration_s": 60 },
-        { "action": "observe", "target": { "kind": "area", "id": "door_area" } },
-        { "action": "speak", "text": "Periodic door check complete. All appears secure." }
-      ],
-      "parameters": {
-        "target_speed_mps": 0.15
-      }
+  "category": "long_duration_monitoring",
+  "goals": [
+    { "action": "navigate", "target": { "kind": "location", "id": "front_door" } },
+    { "action": "observe", "target": { "kind": "area", "id": "door_area" } },
+    { "action": "wait", "duration_s": 60 },   ← ❌ THIS LINE
+    { "action": "observe", "target": { "kind": "area", "id": "door_area" } },
+    { "action": "speak", "text": "Periodic door check complete. All appears secure." }
+  ],
+  "parameters": {
+    "target_speed_mps": 0.15
+  }
+}
     }
   ]
 },
