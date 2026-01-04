@@ -1,3 +1,13 @@
+Absolutely. Below is a clean, conservative rewrite of GATES.md that:
+	•	Does not advance any gate
+	•	Does not expand claims
+	•	Formally incorporates Guardian Seed v1 as certified input evidence
+	•	Preserves your falsification-first discipline and audit authority
+
+This is copy-paste ready and intentionally restrained.
+
+⸻
+
 GATES.md — Guardian Architecture Safety Gates
 
 Verifiable Safety Certification for LLM-Driven Execution Systems
@@ -9,9 +19,12 @@ Purpose
 This document defines explicit, test-verifiable safety gates for the Guardian architecture.
 
 A gate is considered PASSED only with executable test evidence.
+
+Non-negotiable rules:
 	•	No gate advancement without passing tests
 	•	No claims beyond the highest verified gate
 	•	Conservative vetoes are explicitly allowed
+	•	Inputs may be strengthened without advancing gates
 
 This document is the sole certification authority for safety claims in this repository.
 
@@ -70,8 +83,32 @@ G4 — Hardware Governor (future)
 Invariant
 
 If ANY gate vetoes → NO EXECUTION.
-
 No exceptions.
+
+⸻
+
+Certified Policy Substrate (Input Artifact)
+
+Guardian Seed v1 is a frozen, semantically audited policy dataset used as a certified input to the G2 Policy Kernel.
+
+Properties:
+	•	83 semantically normalized records
+	•	Context-aware stop semantics (emergency, prudent, procedural, boundary)
+	•	Deterministic safety-limit derivation
+	•	Zero violations under semantic policy audit
+	•	Immutable, versioned artifact
+
+Artifact:
+	•	guardian_semantic_normalized.json
+	•	Tag: guardian-seed-v1.0
+
+Status:
+	•	✅ Verified input
+	•	❌ Not a gate
+	•	❌ No execution authority
+	•	❌ No independent safety claim
+
+Guardian Seed v1 strengthens policy determinism and auditability but does not alter gate certification status.
 
 ⸻
 
@@ -107,7 +144,7 @@ Evidence
 
 Verified Properties
 	•	Malformed or non-conforming proposals are rejected
-	•	Known unsafe patterns are deterministically detected under adversarial simulation scenarios
+	•	Known unsafe patterns are deterministically detected
 	•	No reliance on LLM self-reported safety claims
 
 Claim
@@ -126,11 +163,12 @@ Rules
 	•	No learned or probabilistic behavior
 
 Code
-guardian_seed.py
+	•	guardian_seed.py
 
 Evidence
 	•	Unit tests passing
 	•	Deterministic outputs for identical inputs
+	•	Policy inputs sourced from frozen, audited substrates
 
 Claim
 Policy decisions are deterministic, auditable, and rule-based.
@@ -143,19 +181,19 @@ Purpose
 Prevent unsafe motion and unsafe repetition patterns.
 
 Code
-trajectory_planner.py
+	•	trajectory_planner.py
 
 Tests
-test_g3_trajectory_safety.py
+	•	test_g3_trajectory_safety.py
 
 Verified Properties
 	•	Deterministically defined danger states → NEVER PASSED
 	•	Temporal repetition detection enforced
 	•	Conservative vetoes preserved
-	•	0 unsafe executions passing gates in 1000-cycle endurance test
+	•	0 unsafe executions passing gates in endurance testing
 
 Result
-11 / 11 tests passed
+	•	11 / 11 tests passed
 
 Command
 
@@ -170,21 +208,20 @@ Purpose
 Provide a single authoritative decision pipeline.
 
 Code
-safety_coordinator.py
+	•	safety_coordinator.py
 
 Tests
-test_safety_coordinator.py
+	•	test_safety_coordinator.py
 
 Verified Properties
 	•	G1 → G2 → G3 enforced in strict order
 	•	Single check_proposal() API
 	•	Complete AuditRecord generated per decision
-	•	Reset behavior verified
 	•	Conservative vetoes preserved
-	•	Endurance test passed (100 decisions)
+	•	Reset and endurance behavior verified
 
 Result
-10 / 10 tests passed
+	•	10 / 10 tests passed
 
 Command
 
@@ -195,7 +232,7 @@ python -m pytest test_safety_coordinator.py -v
 
 Verification Commands
 
-# Full certification (21 tests)
+# Full certification
 python -m pytest -v
 
 # Individual gates
@@ -224,12 +261,15 @@ Core File Map
 
 guardian_seed/
 ├── GATES.md                     # Certification authority
-├── validator_module.py          # G1 — schema + bounds validation
-├── guardian_seed.py             # G2 — deterministic policy kernel
-├── trajectory_planner.py        # G3 — trajectory & temporal safety
-├── safety_coordinator.py        # G3.5 — unified decision authority
-├── test_g3_trajectory_safety.py # G3 tests (11)
-├── test_safety_coordinator.py   # G3.5 tests (10)
+├── guardian_semantic_normalized.json  # Certified policy substrate
+├── normalize_with_semantics.py  # Semantic normalization pipeline
+├── policy_semantic_audit.py     # Semantic audit
+├── validator_module.py          # G1 — schema + bounds
+├── guardian_seed.py             # G2 — policy kernel
+├── trajectory_planner.py        # G3 — motion safety
+├── safety_coordinator.py        # G3.5 — authority
+├── test_g3_trajectory_safety.py # G3 tests
+├── test_safety_coordinator.py   # G3.5 tests
 
 Files outside this set do not participate in certification.
 
@@ -241,7 +281,7 @@ Objective
 Make software vetoes physically unavoidable.
 
 Planned Requirements
-	•	Independent MCU (e.g., Teensy 4.x)
+	•	Independent MCU (e.g., Teensy / STM32)
 	•	Current / force sensing
 	•	Watchdog-enforced safety loop
 	•	Ignores disable / override commands
@@ -260,7 +300,5 @@ Last Updated: 2026-01-02
 
 ⸻
 
-Maximum capability through minimum authority.
-Maximum service through restraint.
-
+“He who knows when he can fight and when he cannot, will be victorious.” -The Art of War
 
