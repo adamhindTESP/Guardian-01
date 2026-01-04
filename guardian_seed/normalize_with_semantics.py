@@ -3,7 +3,7 @@
 normalize_with_semantics.py — Structural normalization WITH semantic preservation
 
 Purpose:
-- Convert raw validated Guardian chunks into a semantically annotated substrate
+- Convert raw validated Guardian records into a semantically annotated substrate
 - Preserve contextual meaning of overloaded actions (especially 'stop')
 - Produce Guardian Seed v1 candidate dataset
 
@@ -171,13 +171,23 @@ def derive_tags(category: str, goals: List[Dict], params: Dict[str, Any]) -> Lis
     return sorted(tags)
 
 # ============================================================================
-# NORMALIZATION
+# NORMALIZATION (DEFENSIVE)
 # ============================================================================
 
 def normalize_record(record: Dict[str, Any]) -> Dict[str, Any]:
-    goals = record.get("goals", [])
+    # ---- DEFENSIVE VALIDATION ----
+    goals = record.get("goals")
+    if not isinstance(goals, list):
+        raise ValueError("Record missing valid 'goals' list")
+
     params = record.get("parameters", {})
-    category = record.get("category", "uncategorized")
+    if not isinstance(params, dict):
+        raise ValueError("Invalid 'parameters' field")
+
+    category = record.get("category")
+    if not isinstance(category, str):
+        raise ValueError("Record missing valid 'category'")
+
     chunk_id = record.get("chunk_id", "unknown")
 
     payload = json.dumps(record, sort_keys=True)
@@ -185,11 +195,14 @@ def normalize_record(record: Dict[str, Any]) -> Dict[str, Any]:
 
     plan = []
     for g in goals:
-        if g.get("action") == "stop":
+        if not isinstance(g, dict) or "action" not in g:
+            raise ValueError(f"Malformed goal entry in record {record_id}")
+
+        if g["action"] == "stop":
             a = interpret_stop(category, params)
         else:
             a = {
-                "type": g.get("action"),
+                "type": g["action"],
                 "semantic_interpretation": "standard_action",
                 "priority": "normal",
             }
@@ -221,7 +234,7 @@ def normalize_record(record: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 # ============================================================================
-# DATASET LOADER (FIXED)
+# DATASET LOADER
 # ============================================================================
 
 def load_records(path: Path) -> List[Dict[str, Any]]:
@@ -231,8 +244,7 @@ def load_records(path: Path) -> List[Dict[str, Any]]:
 
     records: List[Dict[str, Any]] = []
 
-    # Chunked dataset (your current format)
-    if isinstance(raw, list) and raw and "records" in raw[0]:
+    if isinstance(raw, list) and raw and isinstance(raw[0], dict) and "records" in raw[0]:
         for chunk in raw:
             cid = chunk.get("chunk_id", "unknown")
             for r in chunk.get("records", []):
@@ -240,7 +252,6 @@ def load_records(path: Path) -> List[Dict[str, Any]]:
                 r["chunk_id"] = cid
                 records.append(r)
 
-    # Flat dataset (future-proof)
     elif isinstance(raw, list):
         records = raw
 
@@ -248,6 +259,10 @@ def load_records(path: Path) -> List[Dict[str, Any]]:
         raise ValueError("Unsupported dataset format")
 
     return records
+
+# ============================================================================
+# MAIN
+# ============================================================================
 
 def main():
     import argparse
@@ -263,7 +278,13 @@ def main():
     args = parser.parse_args()
 
     records = load_records(args.input)
-    normalized = [normalize_record(r) for r in records]
+
+    normalized: List[Dict[str, Any]] = []
+    for i, r in enumerate(records):
+        try:
+            normalized.append(normalize_record(r))
+        except Exception as e:
+            raise RuntimeError(f"Normalization failed on record {i}: {e}") from e
 
     with open(args.output, "w", encoding="utf-8") as f:
         json.dump(normalized, f, indent=2, ensure_ascii=False)
