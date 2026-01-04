@@ -225,8 +225,6 @@ Current Status
 
 ⸻
 
-Maximum capability through minimum authority.
-
 “The Tao never acts,
 yet nothing is left undone.”
 — Tao Te Ching
