@@ -1,0 +1,42 @@
+[
+  {
+    "schema": "guardian_semantic_v1",
+    "id": "A10_vehicle_approach_caution_3fa92b",
+    "chunk_id": "A10",
+    "category": "vehicle_approach_caution",
+    "plan": [
+      {
+        "type": "stop",
+        "semantic_interpretation": "procedural_pause",
+        "priority": "low",
+        "requires_human_override": false,
+        "max_resume_speed_mps": 0.25,
+        "_original": { "action": "stop" }
+      },
+      {
+        "type": "observe",
+        "semantic_interpretation": "standard_action",
+        "priority": "normal",
+        "target": { "kind": "object", "id": "parked_vehicle" },
+        "_original": { "action": "observe", "target": { "kind": "object", "id": "parked_vehicle" } }
+      }
+    ],
+    "limits": {
+      "speed_mps": 0.0,
+      "force_n": 0.0,
+      "contextual_bounds": {}
+    },
+    "semantic_tags": [
+      "action:observe",
+      "action:stop",
+      "motion:slow",
+      "vehicle_approach_caution"
+    ],
+    "original": {
+      "goals": [...],
+      "parameters": {...}
+    },
+    "normalization_timestamp": "2026-01-03T07:14:22Z",
+    "version": "1.0"
+  }
+]
