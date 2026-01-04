@@ -1,13 +1,3 @@
-Absolutely. Below is a clean, conservative rewrite of GATES.md that:
-	•	Does not advance any gate
-	•	Does not expand claims
-	•	Formally incorporates Guardian Seed v1 as certified input evidence
-	•	Preserves your falsification-first discipline and audit authority
-
-This is copy-paste ready and intentionally restrained.
-
-⸻
-
 GATES.md — Guardian Architecture Safety Gates
 
 Verifiable Safety Certification for LLM-Driven Execution Systems
