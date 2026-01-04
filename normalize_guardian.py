@@ -1,16 +1,26 @@
 import json
 
+
 def normalize_record(chunk_id, idx, record):
     plan = []
-    for g in record["goals"]:
-        plan.append({
-            "type": g["action"],
-            "target": g.get("target", {"kind": "none", "id": None}),
-            "text": g.get("text"),
-            "duration_s": g.get("duration_s")
-        })
 
     params = record.get("parameters", {})
+
+    for g in record["goals"]:
+        step = {
+            "type": g["action"],
+            "target": g.get("target", {"kind": "none", "id": None})
+        }
+
+        # Optional fields
+        if "text" in g:
+            step["text"] = g["text"]
+
+        # WAIT duration is pulled from parameters, never from goals
+        if g["action"] == "wait":
+            step["duration_s"] = params.get("duration_s")
+
+        plan.append(step)
 
     return {
         "schema": "guardian_action_v2",
@@ -22,9 +32,16 @@ def normalize_record(chunk_id, idx, record):
             "speed_mps": params.get("target_speed_mps", 0.0),
             "force_n": params.get("max_force_n", 0.0),
             "step_distance_m": params.get("step_distance_m"),
-            "reobserve_s": params.get("reobservation_s")
+            "reobserve_s": params.get("reobservation_s"),
+            "clearance_m": params.get("clearance_m"),
+            "safe_distance_m": params.get("safe_distance_m")
+        },
+        "flags": {
+            k: v for k, v in params.items()
+            if isinstance(v, bool)
         }
     }
+
 
 def normalize_dataset(chunks):
     out = []
@@ -33,6 +50,7 @@ def normalize_dataset(chunks):
         for i, rec in enumerate(chunk["records"]):
             out.append(normalize_record(cid, i, rec))
     return out
+
 
 if __name__ == "__main__":
     with open("raw_dataset.json", "r") as f:
