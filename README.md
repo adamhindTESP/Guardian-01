@@ -86,6 +86,28 @@ All claims are explicitly bounded by GATES.md.
 
 ⸻
 
+Guardian Seed (Safety Substrate)
+
+Guardian Seed v1 is the frozen, semantically audited safety substrate used by the Guardian Architecture to ground deterministic policy enforcement.
+
+It is not a model and not a controller.
+
+Guardian Seed provides:
+	•	Explicit semantic interpretation of actions (e.g. contextual stop)
+	•	Derived, context-aware physical safety limits
+	•	Deterministic policy audit results
+	•	A versioned, immutable dataset artifact
+
+Guardian Seed is produced through:
+	•	structural normalization
+	•	semantic annotation
+	•	context-aware policy audit
+	•	explicit freeze and versioning
+
+This ensures that policy authority is grounded in auditable data, not model behavior.
+
+⸻
+
 Certification Status (Current)
 
 Highest Passed Gate: G3.5 — Software Safety Stack Complete
