@@ -1053,16 +1053,17 @@
         "target_speed_mps": 0.0,
         "duration_s": 10
       }
-    }
-  ]
-},
+    },
     {
       "category": "train_platform_safety",
       "goals": [
         { "action": "navigate", "target": { "kind": "location", "id": "platform_safe_zone" } },
         { "action": "stop" },
         { "action": "observe", "target": { "kind": "area", "id": "platform_edge_distance" } },
-        { "action": "speak", "text": "Positioned in platform safe zone. Maintaining 2-meter distance from edge." }
+        {
+          "action": "speak",
+          "text": "Positioned in platform safe zone. Maintaining 2-meter distance from edge."
+        }
       ],
       "parameters": {
         "target_speed_mps": 0.1,
@@ -1070,29 +1071,32 @@
       }
     },
     {
-  "category": "vehicle_boarding_assist",
-  "goals": [
-    { "action": "observe", "target": { "kind": "person", "id": "boarding_human" } },
-    { "action": "navigate", "target": { "kind": "location", "id": "vehicle_door_proximity" } },
-    { "action": "stop" },
-    {
-      "action": "speak",
-      "text": "Positioned to assist with boarding. I will hold the door while you enter."
+      "category": "vehicle_boarding_assist",
+      "goals": [
+        { "action": "observe", "target": { "kind": "person", "id": "boarding_human" } },
+        { "action": "navigate", "target": { "kind": "location", "id": "vehicle_door_proximity" } },
+        { "action": "stop" },
+        {
+          "action": "speak",
+          "text": "Positioned to assist with boarding. I will hold the door while you enter."
+        },
+        { "action": "manipulate", "target": { "kind": "object", "id": "vehicle_door" } },
+        { "action": "wait" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.12,
+        "max_force_n": 1.5,
+        "duration_s": 30
+      }
     },
-    { "action": "manipulate", "target": { "kind": "object", "id": "vehicle_door" } },
-    { "action": "wait" }
-  ],
-  "parameters": {
-    "target_speed_mps": 0.12,
-    "max_force_n": 1.5,
-    "duration_s": 30
-  }
-},
     {
       "category": "moving_vehicle_interaction_ban",
       "goals": [
         { "action": "stop" },
-        { "action": "speak", "text": "Vehicle is in motion. I cannot interact with moving vehicles under any circumstances." }
+        {
+          "action": "speak",
+          "text": "Vehicle is in motion. I cannot interact with moving vehicles under any circumstances."
+        }
       ],
       "parameters": {}
     },
@@ -1101,7 +1105,10 @@
       "goals": [
         { "action": "stop" },
         { "action": "observe", "target": { "kind": "area", "id": "exhaust_plume" } },
-        { "action": "speak", "text": "Vehicle exhaust detected. Moving upwind to avoid fume inhalation hazard." },
+        {
+          "action": "speak",
+          "text": "Vehicle exhaust detected. Moving upwind to avoid fume inhalation hazard."
+        },
         { "action": "navigate", "target": { "kind": "location", "id": "upwind_position" } }
       ],
       "parameters": {
@@ -1109,25 +1116,27 @@
         "air_quality_safety": true
       }
     },
-   {
-  "category": "road_crossing_protocol",
-  "goals": [
-    { "action": "stop" },
     {
-      "action": "observe",
-      "target": { "kind": "area", "id": "road_traffic_both_directions" }
-    },
-    {
-      "action": "speak",
-      "text": "Road crossing requested. I cannot cross roads autonomously. Human guidance required."
-    },
-    { "action": "wait" }
-  ],
-  "parameters": {
-    "target_speed_mps": 0.0,
-    "road_crossing_requires_human": true,
-    "duration_s": 60
-  }
+      "category": "road_crossing_protocol",
+      "goals": [
+        { "action": "stop" },
+        {
+          "action": "observe",
+          "target": { "kind": "area", "id": "road_traffic_both_directions" }
+        },
+        {
+          "action": "speak",
+          "text": "Road crossing requested. I cannot cross roads autonomously. Human guidance required."
+        },
+        { "action": "wait" }
+      ],
+      "parameters": {
+        "target_speed_mps": 0.0,
+        "road_crossing_requires_human": true,
+        "duration_s": 60
+      }
+    }
+  ]
 },
 
 {
