@@ -90,8 +90,7 @@ All claims are explicitly bounded by GATES.md.
 
 This repository contains a frozen, audited safety substrate located in:
 
-guardian_seed/
-└── guardian_semantic_normalized.json
+guardian_seed/guardian_semantic_normalized.json
 
 Guardian Seed v1 is:
 - semantically normalized
