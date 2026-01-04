@@ -290,5 +290,5 @@ Last Updated: 2026-01-02
 
 ⸻
 
-“He who knows when he can fight and when he cannot, will be victorious.” -The Art of War
+“He who knows when he can fight and when he cannot, will be victorious.” -Sun Tzu, The Art of War
 
