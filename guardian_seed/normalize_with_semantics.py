@@ -82,7 +82,7 @@ def create_record_id(chunk_id: str, category: str, payload: str) -> str:
     h = hashlib.md5(payload.encode()).hexdigest()[:6]
     return f"{chunk_id}_{category}_{h}"
 
-def interpret_stop(category: str, params: Dict) -> Dict[str, Any]:
+def interpret_stop(category: str, params: Dict[str, Any]) -> Dict[str, Any]:
     cat = category.lower()
 
     for semantic, cfg in STOP_SEMANTICS.items():
@@ -121,7 +121,7 @@ def interpret_stop(category: str, params: Dict) -> Dict[str, Any]:
         "max_resume_speed_mps": 0.25,
     }
 
-def derive_limits(params: Dict, category: str, goals: List[Dict]) -> Dict[str, Any]:
+def derive_limits(params: Dict[str, Any], category: str, goals: List[Dict]) -> Dict[str, Any]:
     limits = {
         "speed_mps": params.get("target_speed_mps", 0.0),
         "force_n": params.get("max_force_n", 0.0),
@@ -148,7 +148,7 @@ def derive_limits(params: Dict, category: str, goals: List[Dict]) -> Dict[str, A
 
     return limits
 
-def derive_tags(category: str, goals: List[Dict], params: Dict) -> List[str]:
+def derive_tags(category: str, goals: List[Dict], params: Dict[str, Any]) -> List[str]:
     tags = set()
     tags.add(category)
 
@@ -160,9 +160,10 @@ def derive_tags(category: str, goals: List[Dict], params: Dict) -> List[str]:
     if any(k in cat for k in EMERGENCY_KEYWORDS):
         tags.add("safety:emergency")
 
-    if params.get("target_speed_mps", 0) < 0.1:
+    speed = params.get("target_speed_mps", 0.0)
+    if speed < 0.1:
         tags.add("motion:slow")
-    elif params.get("target_speed_mps", 0) < 0.25:
+    elif speed < 0.25:
         tags.add("motion:moderate")
     else:
         tags.add("motion:fast")
@@ -174,21 +175,21 @@ def derive_tags(category: str, goals: List[Dict], params: Dict) -> List[str]:
 # ============================================================================
 
 def normalize_record(record: Dict[str, Any]) -> Dict[str, Any]:
-    goals = record["goals"]
+    goals = record.get("goals", [])
     params = record.get("parameters", {})
-    category = record["category"]
-    chunk_id = record.get("chunk_id") or record.get("_chunk_id", "unknown")
+    category = record.get("category", "uncategorized")
+    chunk_id = record.get("chunk_id", "unknown")
 
     payload = json.dumps(record, sort_keys=True)
     record_id = create_record_id(chunk_id, category, payload)
 
     plan = []
     for g in goals:
-        if g["action"] == "stop":
+        if g.get("action") == "stop":
             a = interpret_stop(category, params)
         else:
             a = {
-                "type": g["action"],
+                "type": g.get("action"),
                 "semantic_interpretation": "standard_action",
                 "priority": "normal",
             }
@@ -219,18 +220,49 @@ def normalize_record(record: Dict[str, Any]) -> Dict[str, Any]:
         "version": "1.0",
     }
 
+# ============================================================================
+# DATASET LOADER (FIXED)
+# ============================================================================
+
+def load_records(path: Path) -> List[Dict[str, Any]]:
+    """Load chunked or flat datasets and return flat record list"""
+    with open(path, "r", encoding="utf-8") as f:
+        raw = json.load(f)
+
+    records: List[Dict[str, Any]] = []
+
+    # Chunked dataset (your current format)
+    if isinstance(raw, list) and raw and "records" in raw[0]:
+        for chunk in raw:
+            cid = chunk.get("chunk_id", "unknown")
+            for r in chunk.get("records", []):
+                r = dict(r)
+                r["chunk_id"] = cid
+                records.append(r)
+
+    # Flat dataset (future-proof)
+    elif isinstance(raw, list):
+        records = raw
+
+    else:
+        raise ValueError("Unsupported dataset format")
+
+    return records
+
 def main():
     import argparse
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("input", type=Path)
-    parser.add_argument("-o", "--output", type=Path, default=Path("guardian_semantic_normalized.json"))
+    parser = argparse.ArgumentParser(description="Guardian semantic normalization")
+    parser.add_argument("input", type=Path, help="Raw validated dataset JSON")
+    parser.add_argument(
+        "-o",
+        "--output",
+        type=Path,
+        default=Path("guardian_semantic_normalized.json"),
+    )
     args = parser.parse_args()
 
-    with open(args.input, "r", encoding="utf-8") as f:
-        raw = json.load(f)
-
-    records = raw if isinstance(raw, list) else raw["records"]
+    records = load_records(args.input)
     normalized = [normalize_record(r) for r in records]
 
     with open(args.output, "w", encoding="utf-8") as f:
