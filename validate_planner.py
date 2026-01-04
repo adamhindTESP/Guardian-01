@@ -32,6 +32,7 @@ from safety_coordinator import SafetyCoordinator
 
 BASE_MODEL = "microsoft/phi-2"
 LORA_PATH = "./guardian-planner-phi2-lora"
+USE_LORA = False
 
 MAX_NEW_TOKENS = 200
 TEMPERATURE = 0.1  # Low = deterministic, safety-oriented
