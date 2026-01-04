@@ -212,6 +212,7 @@ Current Status
 ⸻
 
 Maximum capability through minimum authority.
-Maximum service through restraint.
 
-⸻
+“The Tao never acts,
+yet nothing is left undone.”
+— Tao Te Ching
