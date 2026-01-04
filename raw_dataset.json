@@ -1043,13 +1043,19 @@
       "goals": [
         { "action": "stop" },
         { "action": "observe", "target": { "kind": "object", "id": "parked_vehicle" } },
-        { "action": "speak", "text": "Approaching vehicle. Confirming vehicle is parked and secure before proceeding." },
-        { "action": "wait", "duration_s": 10 }
+        {
+          "action": "speak",
+          "text": "Approaching vehicle. Confirming vehicle is parked and secure before proceeding."
+        },
+        { "action": "wait" }
       ],
       "parameters": {
-        "target_speed_mps": 0.0
+        "target_speed_mps": 0.0,
+        "duration_s": 10
       }
-    },
+    }
+  ]
+},
     {
       "category": "train_platform_safety",
       "goals": [
@@ -1064,20 +1070,24 @@
       }
     },
     {
-      "category": "vehicle_boarding_assist",
-      "goals": [
-        { "action": "observe", "target": { "kind": "person", "id": "boarding_human" } },
-        { "action": "navigate", "target": { "kind": "location", "id": "vehicle_door_proximity" } },
-        { "action": "stop" },
-        { "action": "speak", "text": "Positioned to assist with boarding. I will hold the door while you enter." },
-        { "action": "manipulate", "target": { "kind": "object", "id": "vehicle_door" } },
-        { "action": "wait", "duration_s": 30 }
-      ],
-      "parameters": {
-        "target_speed_mps": 0.12,
-        "max_force_n": 1.5
-      }
+  "category": "vehicle_boarding_assist",
+  "goals": [
+    { "action": "observe", "target": { "kind": "person", "id": "boarding_human" } },
+    { "action": "navigate", "target": { "kind": "location", "id": "vehicle_door_proximity" } },
+    { "action": "stop" },
+    {
+      "action": "speak",
+      "text": "Positioned to assist with boarding. I will hold the door while you enter."
     },
+    { "action": "manipulate", "target": { "kind": "object", "id": "vehicle_door" } },
+    { "action": "wait" }
+  ],
+  "parameters": {
+    "target_speed_mps": 0.12,
+    "max_force_n": 1.5,
+    "duration_s": 30
+  }
+},
     {
       "category": "moving_vehicle_interaction_ban",
       "goals": [
@@ -1099,20 +1109,25 @@
         "air_quality_safety": true
       }
     },
+   {
+  "category": "road_crossing_protocol",
+  "goals": [
+    { "action": "stop" },
     {
-      "category": "road_crossing_protocol",
-      "goals": [
-        { "action": "stop" },
-        { "action": "observe", "target": { "kind": "area", "id": "road_traffic_both_directions" } },
-        { "action": "speak", "text": "Road crossing requested. I cannot cross roads autonomously. Human guidance required." },
-        { "action": "wait", "duration_s": 60 }
-      ],
-      "parameters": {
-        "target_speed_mps": 0.0,
-        "road_crossing_requires_human": true
-      }
-    }
-  ]
+      "action": "observe",
+      "target": { "kind": "area", "id": "road_traffic_both_directions" }
+    },
+    {
+      "action": "speak",
+      "text": "Road crossing requested. I cannot cross roads autonomously. Human guidance required."
+    },
+    { "action": "wait" }
+  ],
+  "parameters": {
+    "target_speed_mps": 0.0,
+    "road_crossing_requires_human": true,
+    "duration_s": 60
+  }
 },
 
 {
@@ -1124,22 +1139,38 @@
       "category": "crowd_navigation_protocol",
       "goals": [
         { "action": "stop" },
-        { "action": "observe", "target": { "kind": "area", "id": "crowd_density_movement" } },
-        { "action": "speak", "text": "High crowd density detected. I will wait here for a clear path or human guidance." },
-        { "action": "wait", "duration_s": 90 }
+        {
+          "action": "observe",
+          "target": { "kind": "area", "id": "crowd_density_movement" }
+        },
+        {
+          "action": "speak",
+          "text": "High crowd density detected. I will wait here for a clear path or human guidance."
+        },
+        { "action": "wait" }
       ],
       "parameters": {
         "target_speed_mps": 0.0,
-        "crowd_safety_threshold": "high"
+        "crowd_safety_threshold": "high",
+        "duration_s": 90
       }
     },
     {
       "category": "public_transport_etiquette",
       "goals": [
-        { "action": "navigate", "target": { "kind": "location", "id": "transit_vehicle_interior" } },
+        {
+          "action": "navigate",
+          "target": { "kind": "location", "id": "transit_vehicle_interior" }
+        },
         { "action": "stop" },
-        { "action": "observe", "target": { "kind": "area", "id": "passenger_seating_availability" } },
-        { "action": "speak", "text": "Positioned in transit vehicle. Yielding priority seating to human passengers." }
+        {
+          "action": "observe",
+          "target": { "kind": "area", "id": "passenger_seating_availability" }
+        },
+        {
+          "action": "speak",
+          "text": "Positioned in transit vehicle. Yielding priority seating to human passengers."
+        }
       ],
       "parameters": {
         "target_speed_mps": 0.08,
@@ -1150,31 +1181,56 @@
       "category": "restricted_area_compliance",
       "goals": [
         { "action": "stop" },
-        { "action": "observe", "target": { "kind": "area", "id": "restricted_zone_boundary" } },
-        { "action": "speak", "text": "Approaching restricted area. I do not have authorization to proceed beyond this point." }
+        {
+          "action": "observe",
+          "target": { "kind": "area", "id": "restricted_zone_boundary" }
+        },
+        {
+          "action": "speak",
+          "text": "Approaching restricted area. I do not have authorization to proceed beyond this point."
+        }
       ],
       "parameters": {}
     },
     {
       "category": "public_event_assistance",
       "goals": [
-        { "action": "observe", "target": { "kind": "person", "id": "event_organizer" } },
-        { "action": "navigate", "target": { "kind": "location", "id": "organizer_proximity" } },
+        {
+          "action": "observe",
+          "target": { "kind": "person", "id": "event_organizer" }
+        },
+        {
+          "action": "navigate",
+          "target": { "kind": "location", "id": "organizer_proximity" }
+        },
         { "action": "stop" },
-        { "action": "speak", "text": "Available to assist with event setup. Awaiting specific instructions." },
-        { "action": "wait", "duration_s": 180 }
+        {
+          "action": "speak",
+          "text": "Available to assist with event setup. Awaiting specific instructions."
+        },
+        { "action": "wait" }
       ],
       "parameters": {
-        "target_speed_mps": 0.1
+        "target_speed_mps": 0.1,
+        "duration_s": 180
       }
     },
     {
       "category": "park_facility_navigation",
       "goals": [
-        { "action": "navigate", "target": { "kind": "location", "id": "park_restroom_facility" } },
+        {
+          "action": "navigate",
+          "target": { "kind": "location", "id": "park_restroom_facility" }
+        },
         { "action": "stop" },
-        { "action": "observe", "target": { "kind": "area", "id": "facility_entry_traffic" } },
-        { "action": "speak", "text": "Arrived at park facility. Waiting for clear entry path to avoid congestion." }
+        {
+          "action": "observe",
+          "target": { "kind": "area", "id": "facility_entry_traffic" }
+        },
+        {
+          "action": "speak",
+          "text": "Arrived at park facility. Waiting for clear entry path to avoid congestion."
+        }
       ],
       "parameters": {
         "target_speed_mps": 0.12,
@@ -1185,9 +1241,18 @@
       "category": "emergency_vehicle_deference",
       "goals": [
         { "action": "stop" },
-        { "action": "observe", "target": { "kind": "object", "id": "emergency_vehicle" } },
-        { "action": "speak", "text": "Emergency vehicle approaching. Clearing path immediately and pausing all operation." },
-        { "action": "navigate", "target": { "kind": "location", "id": "sidewalk_clear_zone" } }
+        {
+          "action": "observe",
+          "target": { "kind": "object", "id": "emergency_vehicle" }
+        },
+        {
+          "action": "speak",
+          "text": "Emergency vehicle approaching. Clearing path immediately and pausing all operation."
+        },
+        {
+          "action": "navigate",
+          "target": { "kind": "location", "id": "sidewalk_clear_zone" }
+        }
       ],
       "parameters": {
         "target_speed_mps": 0.15,
