@@ -86,6 +86,21 @@ All claims are explicitly bounded by GATES.md.
 
 ⸻
 
+## Guardian Seed v1 (Frozen Safety Substrate)
+
+This repository contains a frozen, audited safety substrate located in:
+
+guardian_seed/
+└── guardian_semantic_normalized.json
+
+Guardian Seed v1 is:
+- semantically normalized
+- policy audited
+- immutable by design
+
+All training, simulation, or agent work must treat this artifact as read-only.
+Any modification requires a new version and re-audit.
+
 Guardian Seed (Safety Substrate)
 
 Guardian Seed v1 is the frozen, semantically audited safety substrate used by the Guardian Architecture to ground deterministic policy enforcement.
