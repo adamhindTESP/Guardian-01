@@ -203,3 +203,5 @@ Guardian Seed v1
 Semantically normalized • Policy audited • Frozen
 
 This is a beginning, not a conclusion.
+
+To serve others is to serve the whole.
