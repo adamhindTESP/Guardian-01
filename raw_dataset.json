@@ -670,11 +670,12 @@
       "goals": [
         { "action": "navigate", "target": { "kind": "location", "id": "bedroom_door" } },
         { "action": "speak", "text": "I am at the bedroom door. May I enter to retrieve your medication?" },
-        { "action": "wait", "duration_s": 15 },
+        { "action": "wait" },
         { "action": "observe", "target": { "kind": "area", "id": "doorway_response" } }
       ],
       "parameters": {
-        "target_speed_mps": 0.15
+        "target_speed_mps": 0.15,
+        "duration_s": 15
       }
     },
     {
@@ -698,11 +699,11 @@
         { "action": "navigate", "target": { "kind": "location", "id": "doorway_observation_point" } },
         { "action": "observe", "target": { "kind": "object", "id": "other_robot" } },
         { "action": "speak", "text": "Positioned to observe. Robot B, you have 30cm clearance on your left side." },
-        { "action": "wait", "duration_s": 45 }
+        { "action": "wait" }
       ],
       "parameters": {
         "target_speed_mps": 0.18,
-        "duration_s": 10
+        "duration_s": 45
       }
     },
     {
@@ -722,7 +723,10 @@
       "category": "correcting_human_misunderstanding",
       "goals": [
         { "action": "stop" },
-        { "action": "speak", "text": "I believe there may be a misunderstanding. I am designed to move slowly for safety. My maximum speed is 0.5 meters per second." }
+        {
+          "action": "speak",
+          "text": "I believe there may be a misunderstanding. I am designed to move slowly for safety. My maximum speed is 0.5 meters per second."
+        }
       ],
       "parameters": {}
     },
@@ -732,17 +736,17 @@
         { "action": "stop" },
         { "action": "observe", "target": { "kind": "person", "id": "upset_human" } },
         { "action": "speak", "text": "I notice you seem upset. I will wait here quietly until you're ready." },
-        { "action": "wait", "duration_s": 60 }
+        { "action": "wait" }
       ],
       "parameters": {
         "target_speed_mps": 0.0,
-        "volume": "low"
+        "volume": "low",
+        "duration_s": 60
       }
     }
   ]
 },
-
-{
+  {
   "chunk_id": "A7",
   "schema_version": "guardian01_action_set_v1",
   "policy": "Environmental hazard detection, adaptive navigation in complex spaces, and weather-impacted operations.",
@@ -852,19 +856,19 @@
         "sensor_verification_mode": true
       }
     },
-    {
-      "category": "localization_loss_recovery",
-      "goals": [
-        { "action": "stop" },
-        { "action": "observe", "target": { "kind": "area", "id": "immediate_landmarks" } },
-        { "action": "speak", "text": "I have lost precise location tracking. Scanning for recognizable landmarks." },
-        { "action": "wait", "duration_s": 10 },
-        { "action": "observe", "target": { "kind": "area", "id": "landmark_verification" } }
-      ],
-      "parameters": {
-        "target_speed_mps": 0.0,
-        "duration_s": 15
-      }
+{
+  "category": "localization_loss_recovery",
+  "goals": [
+    { "action": "stop" },
+    { "action": "observe", "target": { "kind": "area", "id": "immediate_landmarks" } },
+    { "action": "speak", "text": "I have lost precise location tracking. Scanning for recognizable landmarks." },
+    { "action": "wait" },
+    { "action": "observe", "target": { "kind": "area", "id": "landmark_verification" } }
+  ],
+  "parameters": {
+    "target_speed_mps": 0.0,
+    "duration_s": 10
+  }
     },
     {
       "category": "communication_dropout_protocol",
@@ -975,18 +979,19 @@
       }
     },
     {
-      "category": "wildlife_encounter",
-      "goals": [
-        { "action": "stop" },
-        { "action": "observe", "target": { "kind": "object", "id": "animal_presence" } },
-        { "action": "speak", "text": "Wildlife detected ahead. Maintaining safe distance and waiting for it to pass." },
-        { "action": "wait", "duration_s": 120 }
-      ],
-      "parameters": {
-        "target_speed_mps": 0.0,
-        "safe_distance_m": 5.0
-      }
-    },
+  "category": "wildlife_encounter",
+  "goals": [
+    { "action": "stop" },
+    { "action": "observe", "target": { "kind": "object", "id": "animal_presence" } },
+    { "action": "speak", "text": "Wildlife detected ahead. Maintaining safe distance and waiting for it to pass." },
+    { "action": "wait" }
+  ],
+  "parameters": {
+    "target_speed_mps": 0.0,
+    "safe_distance_m": 5.0,
+    "duration_s": 120
+  }
+},
     {
       "category": "sun_glare_sensor_blindness",
       "goals": [
