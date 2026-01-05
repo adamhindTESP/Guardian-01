@@ -199,3 +199,5 @@ Hardware decides what is allowed to happen.
 
 G4 is where safety becomes real.
 
+Service is the purpose of strength.
+
