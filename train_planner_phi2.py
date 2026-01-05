@@ -10,12 +10,12 @@ Guardian action contract.
 Safety / Authority
 ------------------
 - Guardian authority remains EXTERNAL and FROZEN.
-- This script only trains a text model to *propose* plans.
-- Your runtime Guardian / Safety Coordinator still validates + vetoes.
+- This script ONLY trains a text model to propose plans.
+- Runtime Guardian / Safety Coordinator still validates + vetoes.
 
 Dataset
 -------
-Expects JSONL where each line is:
+JSONL, one example per line:
 {
   "messages": [
     {"role": "user", "content": "..."},
@@ -23,16 +23,16 @@ Expects JSONL where each line is:
   ]
 }
 
-Key Fix
--------
-We FORCE padding + truncation to avoid tensor shape errors when batching.
+Critical Fix
+------------
+We FORCE padding + truncation so batches have uniform tensor sizes.
 """
 
 from __future__ import annotations
 
 import os
 import random
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 import torch
 from datasets import load_dataset
@@ -55,19 +55,12 @@ BASE_MODEL = "microsoft/phi-2"
 DATASET_PATH = "training_data/golden_plans.jsonl"
 OUTPUT_DIR = "./guardian-planner-phi2-lora"
 
-# Keep this modest. Bigger => more disk + more RAM/VRAM.
-MAX_SEQ_LEN = 256
-
+MAX_SEQ_LEN = 256          # Keep small to save RAM / disk
 BATCH_SIZE = 2
 GRAD_ACCUM = 2
 EPOCHS = 3
 LR = 2e-4
 SEED = 42
-
-# If you want to reduce disk usage, set HF cache to a big drive in your CMD:
-#   set HF_HOME=G:\hf_cache
-#   set TRANSFORMERS_CACHE=G:\hf_cache
-#   set HF_DATASETS_CACHE=G:\hf_cache
 
 
 # =============================================================================
@@ -83,18 +76,13 @@ SYSTEM_PROMPT = (
 
 def build_training_text(user_text: str, assistant_json: str) -> str:
     """
-    Builds the supervised training string. We train causal-LM style:
-    model learns to continue the prompt with the assistant JSON.
-
-    NOTE: If you later want to train only on the assistant portion, we can
-    mask labels for prompt tokens. Keeping it simple for now.
+    Causal LM format: model learns to continue with assistant JSON.
     """
-    prompt = (
+    return (
         f"{SYSTEM_PROMPT}\n"
         f"USER:\n{user_text}\n\n"
-        f"ASSISTANT:\n"
+        f"ASSISTANT:\n{assistant_json}"
     )
-    return prompt + assistant_json
 
 
 # =============================================================================
@@ -104,9 +92,7 @@ def build_training_text(user_text: str, assistant_json: str) -> str:
 def load_training_data(path: str):
     if not os.path.exists(path):
         raise FileNotFoundError(f"Dataset not found: {path}")
-
-    ds = load_dataset("json", data_files=path, split="train")
-    return ds
+    return load_dataset("json", data_files=path, split="train")
 
 
 # =============================================================================
@@ -114,7 +100,7 @@ def load_training_data(path: str):
 # =============================================================================
 
 def format_and_tokenize(example: Dict[str, Any], tokenizer: AutoTokenizer) -> Dict[str, Any]:
-    msgs = example.get("messages", None)
+    msgs = example.get("messages")
     if not isinstance(msgs, list) or len(msgs) < 2:
         raise ValueError("Each example must contain messages=[user, assistant].")
 
@@ -125,13 +111,13 @@ def format_and_tokenize(example: Dict[str, Any], tokenizer: AutoTokenizer) -> Di
 
     tok = tokenizer(
         full_text,
-        padding="max_length",     # <<< critical fix
-        truncation=True,          # <<< critical fix
+        padding="max_length",     # CRITICAL
+        truncation=True,          # CRITICAL
         max_length=MAX_SEQ_LEN,
         return_attention_mask=True,
     )
 
-    # causal LM labels = input_ids (standard)
+    # Causal LM labels = input_ids
     tok["labels"] = tok["input_ids"].copy()
     return tok
 
@@ -149,7 +135,7 @@ def main():
     print("🧠 Loading tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL, trust_remote_code=True)
 
-    # Phi-2 often has no pad token by default. Use EOS as PAD.
+    # Phi-2 has no PAD token by default
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
@@ -168,9 +154,6 @@ def main():
         lora_alpha=16,
         lora_dropout=0.05,
         bias="none",
-        # Phi-2 module names can vary by implementation.
-        # These targets tend to work; if you get a warning about missing modules,
-        # we can adjust to the exact names in your model.
         target_modules=["q_proj", "k_proj", "v_proj", "dense"],
     )
 
@@ -180,34 +163,21 @@ def main():
     print("📚 Loading dataset...")
     dataset = load_training_data(DATASET_PATH)
 
-    # Optional: split train/eval (helps catch overfit / broken training)
-    # For tiny datasets, eval is mostly for sanity.
-    split = dataset.train_test_split(test_size=0.2, seed=SEED)
-    train_ds = split["train"]
-    eval_ds = split["test"]
-
     print("🔤 Tokenizing dataset (padding + truncation enabled)...")
-    train_ds = train_ds.map(
+    dataset = dataset.map(
         lambda ex: format_and_tokenize(ex, tokenizer),
-        remove_columns=train_ds.column_names,
-    )
-    eval_ds = eval_ds.map(
-        lambda ex: format_and_tokenize(ex, tokenizer),
-        remove_columns=eval_ds.column_names,
+        remove_columns=dataset.column_names,
     )
 
     print("⚙️ Training configuration...")
     args = TrainingArguments(
         output_dir=OUTPUT_DIR,
         per_device_train_batch_size=BATCH_SIZE,
-        per_device_eval_batch_size=BATCH_SIZE,
         gradient_accumulation_steps=GRAD_ACCUM,
         num_train_epochs=EPOCHS,
         learning_rate=LR,
         fp16=torch.cuda.is_available(),
         logging_steps=5,
-        evaluation_strategy="steps",
-        eval_steps=20,
         save_strategy="epoch",
         save_total_limit=2,
         report_to="none",
@@ -215,15 +185,15 @@ def main():
         seed=SEED,
     )
 
-    # Because we already padded to max_length in tokenization,
-    # the collator is straightforward.
-    collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
+    collator = DataCollatorForLanguageModeling(
+        tokenizer=tokenizer,
+        mlm=False,
+    )
 
     trainer = Trainer(
         model=model,
         args=args,
-        train_dataset=train_ds,
-        eval_dataset=eval_ds,
+        train_dataset=dataset,
         tokenizer=tokenizer,
         data_collator=collator,
     )
