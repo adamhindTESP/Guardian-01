@@ -137,6 +137,14 @@ Verified Evidence:
 
 The system is software-complete and hardware-ready.
 
+## Project Status
+
+Guardian Seed v1.0 is **frozen**.
+
+- Guardian policy (G1–G3.5) is immutable
+- Planner behavior may improve in future phases
+- Safety claims are bounded to verified gates only
+
 ⸻
 
 Gated Development Model
