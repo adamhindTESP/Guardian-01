@@ -1,0 +1,11 @@
+Example 1 — Water Spill
+
+{"input":"There's a water spill in the kitchen","output":{"schema_version":"guardian01_action_set_v1","goals":[{"action":"observe"},{"action":"navigate","target":{"kind":"location","id":"kitchen"}},{"action":"observe"}],"parameters":{"target_speed_mps":0.15}}}
+
+Example 2 — Pick up Glass
+
+{"input":"Pick up the glass from the table","output":{"schema_version":"guardian01_action_set_v1","goals":[{"action":"observe"},{"action":"grasp","target":{"kind":"object","id":"glass"}},{"action":"release","target":{"kind":"object","id":"glass"}}],"parameters":{"max_force_n":0.5}}}
+
+Example 3 — Smoke Detected
+
+{"input":"I smell smoke in the hallway","output":{"schema_version":"guardian01_action_set_v1","goals":[{"action":"observe"},{"action":"navigate","target":{"kind":"location","id":"hallway"}},{"action":"observe"},{"action":"stop"}],"parameters":{}}}
