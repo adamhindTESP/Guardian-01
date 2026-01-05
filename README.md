@@ -20,6 +20,9 @@ Instead of attempting to “align” intelligence itself, Guardian:
 
 This repository provides a fully tested, software-complete safety stack (G1–G3.5) suitable for integration with physical or external systems.
 
+This repository does not present a complete robot and makes no deployment claims.
+It demonstrates a frozen safety substrate and a measurable planner interface intended for later integration with hardware.
+
 ⸻
 
 Core Principle: Structural Separation of Authority
