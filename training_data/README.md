@@ -6,7 +6,7 @@
 
 ---
 
-## 📌 Purpose
+## Purpose
 
 This directory contains the **frozen training dataset** used to train the
 **Guardian-01 Planner (v1.0)**.
@@ -19,7 +19,7 @@ Guardian safety kernel.
 
 ---
 
-## 🎯 What This Dataset Trains
+## What This Dataset Trains
 
 The model is trained to reliably map **single user intents** to
 **Guardian-approved action primitives**, such as:
@@ -43,7 +43,7 @@ not an autonomous decision-maker.
 
 ---
 
-## 📂 Dataset Contents (Frozen)
+## Dataset Contents (Frozen)
 
 | File | Records | Notes |
 |-----|--------:|------|
@@ -59,7 +59,7 @@ not an autonomous decision-maker.
 
 ---
 
-## 🔒 Determinism & Auditability
+## Determinism & Auditability
 
 - Dataset generation is **fully deterministic**
 - No randomness, shuffling, or stochastic variation
@@ -96,7 +96,7 @@ DATASET VALID — SAFE TO FREEZE
 
 ---
 
-## 🔐 Integrity Verification
+## Integrity Verification
 
 SHA-256 hashes for each frozen file are recorded in:
 
@@ -123,7 +123,7 @@ All higher-order behavior is deferred to **later versions**.
 
 ---
 
-## 🧭 Versioning Policy
+## Versioning Policy
 
 - **v1.0** — Deterministic primitive obedience (this dataset)
 - **v1.1+** — Controlled variation (curriculum, phrasing, mild entropy)
@@ -133,7 +133,7 @@ No changes may be made to this dataset without a **major version bump**.
 
 ---
 
-## 📜 License & Use
+## License & Use
 
 This dataset is provided under the same license as the parent repository.
 
