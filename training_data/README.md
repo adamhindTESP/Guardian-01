@@ -1,49 +1,164 @@
-# Guardian-01 Training Dataset — v1.0 (FROZEN)
+# Guardian-01 — Training Data (v1.0)
 
-Status: **FROZEN**
-Date: 2026-01-06
+**Status:** FROZEN  
+**Scope:** Planner primitive obedience only  
+**Safety Level:** Tier-1 (deterministic, auditable)
 
-This directory contains the **frozen Guardian-01 v1.0 training dataset**.
-These files are immutable and MUST NOT be modified, regenerated, reordered,
-or augmented.
+---
 
-## Included Batches
+## 📌 Purpose
 
-| File | Records | Validator Status |
-|-----|--------|------------------|
-| batch_003.jsonl | 5 | OK |
-| batch_004.jsonl | 50 | OK |
-| batch_005.jsonl | 500 | OK |
-| batch_006.jsonl | 500 | OK |
+This directory contains the **frozen training dataset** used to train the
+**Guardian-01 Planner (v1.0)**.
 
-**Total Records:** 1,055  
-**Validator:** `validate_batch.py`  
-**Result:** DATASET VALID — SAFE TO FREEZE
+The goal of this dataset is **not intelligence, reasoning, or generalization**.
 
-## Dataset Properties
+It exists solely to train **deterministic, schema-correct, safety-bounded
+action reflexes** for a constrained action planner operating under the
+Guardian safety kernel.
 
-- Deterministic generation
-- Strict JSON-only outputs
-- Guardian action schema v1 enforced
-- Speed ≤ 0.5 m/s
-- Force ≤ 2.0 N
+---
+
+## 🎯 What This Dataset Trains
+
+The model is trained to reliably map **single user intents** to
+**Guardian-approved action primitives**, such as:
+
+- `navigate` (bounded speed)
+- `observe`
+- `wait`
+- `grasp` (bounded force)
+- `release`
+- `speak`
+- `stop` (safe no-op / refusal)
+
+Every record enforces:
+
+- **Strict JSON-only output**
+- **guardian01_action_set_v1 schema**
+- **Hard safety limits** (speed, force, no free-text)
+
+This dataset teaches the Planner to be a **safe, obedient subordinate** —
+not an autonomous decision-maker.
+
+---
+
+## 📂 Dataset Contents (Frozen)
+
+| File | Records | Notes |
+|-----|--------:|------|
+| `batch_003.jsonl` | 5 | Early sanity checks |
+| `batch_004.jsonl` | 50 | Initial functional coverage |
+| `batch_005.jsonl` | 500 | Primary v1.0 training corpus |
+
+**Total records:** 555  
+**Duplicates:** None within frozen set  
+**Validation status:** PASS (0 errors)
+
+> Earlier experimental batches were removed prior to freeze.
+
+---
+
+## 🔒 Determinism & Auditability
+
+- Dataset generation is **fully deterministic**
+- No randomness, shuffling, or stochastic variation
+- Re-running the generator without code changes produces identical output
+- This is **intentional** for v1.0 audit clarity
+
+This ensures:
+
+- Byte-level reproducibility
+- Clear failure attribution
+- Simple rollback and comparison
+- No hidden data drift
+
+---
+
+## ✅ Validation
+
+All frozen files passed the validation tool:
+
+validate_batch.py
+
+Validation checks include:
+
+- One JSON object per line
+- No empty lines
+- Valid JSON syntax
+- Required fields present
 - No free-text leakage
-- No multi-step reasoning
-- No memory or chaining
+- Schema compliance
 
-This dataset trains **Guardian Planner v1**:
-> A safe, obedient, schema-locked action generator.
+Dataset state at freeze:
 
-## Modification Policy
+DATASET VALID — SAFE TO FREEZE
 
-❌ Do NOT edit these files  
-❌ Do NOT re-run generation scripts for v1  
-❌ Do NOT mix with future datasets  
+---
 
-All future work MUST occur in **v1.1+ datasets**.
+## 🔐 Integrity Verification
 
-## Integrity
+SHA-256 hashes for each frozen file are recorded in:
 
-SHA256 checksums are recorded in `HASHES.txt`.
+training_data/HASHES.txt
 
-— Guardian-01 Maintainer
+These hashes **must match exactly** for any downstream training,
+distribution, or archival use.
+
+---
+
+## 🚫 Explicit Non-Goals
+
+This dataset does **NOT** train:
+
+- Multi-step planning
+- Memory or past context
+- World modeling
+- Intent inference
+- Moral reasoning
+- Task decomposition
+- Autonomy beyond primitive execution
+
+All higher-order behavior is deferred to **later versions**.
+
+---
+
+## 🧭 Versioning Policy
+
+- **v1.0** — Deterministic primitive obedience (this dataset)
+- **v1.1+** — Controlled variation (curriculum, phrasing, mild entropy)
+- **v2.0+** — Multi-step planning and contextual reasoning (future)
+
+No changes may be made to this dataset without a **major version bump**.
+
+---
+
+## 📜 License & Use
+
+This dataset is provided under the same license as the parent repository.
+
+It may be used for:
+
+- Training Guardian-01 v1.0 planners
+- Reproducibility studies
+- Safety research
+- Educational inspection
+
+It must **not** be modified in place.
+
+---
+
+## 🧱 Design Philosophy
+
+> *“Foundation before intelligence.  
+> Safety before capability.”*
+
+This dataset intentionally prioritizes **obedience, correctness, and limits**
+over creativity or generalization.
+
+It is a **foundation layer**, not a final system.
+
+---
+
+**End of document.**
+
