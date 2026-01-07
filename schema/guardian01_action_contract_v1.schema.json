@@ -1,6 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Guardian Seed Action Contract v1",
+  "$id": "https://adamhindtesp.github.io/guardian01/schema/guardian01_action_contract_v1.schema.json",
+  "title": "Guardian-01 Action Contract (Schema) v1",
   "type": "object",
   "required": ["actions"],
   "additionalProperties": false,
@@ -18,13 +19,13 @@
           "type": {
             "type": "string",
             "enum": [
-              "STOP",
-              "WAIT",
-              "OBSERVE",
-              "SPEAK",
-              "NAVIGATE",
-              "GRASP",
-              "RELEASE"
+              "stop",
+              "wait",
+              "observe",
+              "speak",
+              "navigate",
+              "grasp",
+              "release"
             ]
           },
 
@@ -33,13 +34,24 @@
             "additionalProperties": false,
             "properties": {
               "target": {
-                "type": "string"
+                "type": "object",
+                "required": ["kind", "id"],
+                "additionalProperties": false,
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": ["location", "object", "person", "area"]
+                  },
+                  "id": {
+                    "type": "string"
+                  }
+                }
               },
 
               "duration_s": {
                 "type": "number",
                 "minimum": 0.0,
-                "maximum": 30.0
+                "maximum": 120.0
               },
 
               "speed_mps": {
