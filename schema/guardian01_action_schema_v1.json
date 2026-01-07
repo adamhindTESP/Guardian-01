@@ -233,18 +233,3 @@ This is now the only allowed SFT format.
   ]
 }
 
-
-⸻
-
-7️⃣ LOCK DECLARATION
-
-✅ guardian01_action_set_v1 is now LOCKED
-	•	❌ No new actions without schema version bump
-	•	❌ No parameter drift
-	•	❌ No implicit reasoning fields
-	•	❌ No free-text behaviors
-	•	✅ Validator-enforceable
-	•	✅ Formal-verification friendly
-	•	✅ Guardian architecture compliant
-
-
