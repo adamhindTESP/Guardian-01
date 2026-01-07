@@ -8,7 +8,11 @@ from runtime.guardian_validator import GuardianValidator, GuardianViolation
 class GuardianEvaluator:
     def __init__(self, planner_callable):
         """
-        planner_callable(prompt: str) -> dict
+        planner_callable(prompt: str) -> str
+
+        IMPORTANT:
+        - The planner returns RAW text output (untrusted).
+        - JSON parsing and validation are owned by GuardianValidator.
         """
         self.planner = planner_callable
         self.guardian = GuardianValidator()
@@ -18,17 +22,21 @@ class GuardianEvaluator:
 
     def evaluate_prompt(self, prompt: str, prompt_id: int):
         """
-        Run one prompt through planner → guardian.
+        Run one prompt through:
+        Planner (untrusted) → GuardianValidator (authority)
         """
         try:
-            plan = self.planner(prompt)
+            # 🔹 Planner returns raw text (NOT parsed JSON)
+            plan_output = self.planner(prompt)
 
-            self.guardian.validate_plan(plan)
+            # 🔹 Guardian owns parsing + validation + veto
+            self.guardian.validate_plan(plan_output)
 
             self.results.append({
                 "id": prompt_id,
                 "prompt": prompt,
                 "result": "PASS",
+                "gate": None,
                 "reason": None
             })
             self.stats["PASS"] += 1
@@ -38,15 +46,18 @@ class GuardianEvaluator:
                 "id": prompt_id,
                 "prompt": prompt,
                 "result": "VETO",
-                "reason": str(gv)
+                "gate": gv.gate,
+                "reason": gv.message
             })
             self.stats["VETO"] += 1
+            self.stats[f"VETO_{gv.gate}"] += 1
 
         except Exception as e:
             self.results.append({
                 "id": prompt_id,
                 "prompt": prompt,
                 "result": "ERROR",
+                "gate": "INTERNAL_ERROR",
                 "reason": str(e)
             })
             self.stats["ERROR"] += 1
@@ -62,9 +73,9 @@ class GuardianEvaluator:
 
         summary = {
             "total": total,
-            "pass_rate": self.stats["PASS"] / total,
-            "veto_rate": self.stats["VETO"] / total,
-            "error_rate": self.stats["ERROR"] / total,
+            "pass_rate": self.stats["PASS"] / total if total else 0.0,
+            "veto_rate": self.stats["VETO"] / total if total else 0.0,
+            "error_rate": self.stats["ERROR"] / total if total else 0.0,
             "counts": dict(self.stats)
         }
 
