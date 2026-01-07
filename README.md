@@ -13,15 +13,15 @@ How do we allow LLMs to reason freely without allowing them to act unsafely?
 
 The Guardian Architecture answers this by enforcing safety structurally, not behaviorally.
 
-Instead of attempting to “align” intelligence itself, Guardian:
-	•	treats LLMs as untrusted reasoning engines
-	•	enforces execution through deterministic, auditable veto gates
-	•	guarantees that no action executes unless all safety authorities approve
+Instead of attempting to align intelligence itself, Guardian:
+	•	Treats LLMs as untrusted reasoning engines
+	•	Enforces execution through deterministic, auditable veto gates
+	•	Guarantees that no action executes unless all safety authorities approve
 
-This repository provides a fully tested, software-complete safety stack (G1–G3.5) suitable for integration with physical or external systems.
+This repository provides a software-complete safety stack (G1–G3.5) suitable for later integration with physical or external systems.
 
 This repository does not present a complete robot and makes no deployment claims.
-It demonstrates a frozen safety substrate and a measurable planner interface intended for later integration with hardware.
+It demonstrates a frozen safety substrate and a measurable planner interface intended for downstream integration.
 
 ⸻
 
@@ -30,27 +30,29 @@ Core Principle: Structural Separation of Authority
 Reasoning is not authority.
 Execution is never delegated to the LLM.
 
-Guardian enforces a dual-veto (multi-gate) rule:
+Guardian enforces a strict multi-gate rule:
 
-Any veto → no execution.
-All gates pass → execution permitted.
+Any veto → no execution
+All gates pass → execution permitted
+
+There is no negotiation, repair, or persuasion within the safety path.
 
 ⸻
 
 Reference Architecture (G3.5 Certified)
 
 LLM (Untrusted Reasoning)
-   ↓  (Structured JSON only)
+        ↓  (Structured JSON only)
 G1 — Validator
-   ↓
+        ↓
 G2 — Deterministic Policy Kernel
-   ↓
+        ↓
 G3 — Deterministic Trajectory / Temporal Safety
-   ↓
+        ↓
 G3.5 — Safety Coordinator (Single Authority API)
-   ↓
-[ FINAL_PASS | VETO ]
-   ↓
+        ↓
+     [ FINAL_PASS | VETO ]
+        ↓
 G4 — Hardware / External Governor (future)
 
 Key Properties
@@ -61,11 +63,39 @@ Key Properties
 	•	Conservative vetoes are explicitly allowed
 	•	Failure modes default to NO-GO
 
+⸻
+
 Schema-Locked Execution Interface
-	•	All LLM outputs must conform to a fixed, versioned action schema
+
+All planner outputs must conform to a fixed, versioned action schema.
 	•	Only whitelisted actions with bounded parameters are permitted
-	•	Invalid structure, missing fields, or sequencing violations are vetoed before policy evaluation
-	•	Safety reduces to: “Does this JSON pass the validator?”
+	•	Invalid structure, missing fields, or sequencing violations are vetoed
+	•	Safety reduces to a single question:
+
+“Does this JSON pass the validator?”
+
+⸻
+
+Frozen Action Contract & Enforcement (Normative)
+
+All planner outputs are treated as untrusted proposals until validated.
+
+Guardian enforces safety using three frozen, non-learning artifacts:
+	•	Action Contract (Schema)
+schema/guardian01_action_contract_v1.schema.json
+Defines the complete, closed set of permitted actions and hard physical bounds.
+	•	Guardian Validator (Veto Kernel)
+runtime/guardian_validator.py
+Deterministically enforces structural validity, policy limits, and sequencing rules.
+The Guardian does not learn, adapt, or update state.
+	•	Guardian Evaluator (Audit Harness)
+evaluation/guardian_evaluator.py
+Executes planner proposals against the frozen Guardian to produce
+PASS / VETO / ERROR outcomes with full auditability.
+
+These artifacts are normative and frozen for Guardian Seed v1.
+Any modification requires a version bump and full re-evaluation.
+
 ⸻
 
 What This Repository Provides
@@ -73,7 +103,7 @@ What This Repository Provides
 ✅ What It Does
 	•	A complete, tested software safety stack (G1–G3.5)
 	•	Deterministic semantic policy enforcement
-	•	Deterministic trajectory & temporal safety checks
+	•	Deterministic trajectory and temporal safety checks
 	•	A single authoritative check_proposal() interface
 	•	End-to-end auditability for every decision
 	•	A GO / NO-GO gate model that strictly limits claims
@@ -89,39 +119,29 @@ All claims are explicitly bounded by GATES.md.
 
 ⸻
 
-## Guardian Seed v1 (Frozen Safety Substrate)
+Guardian Seed v1 (Frozen Safety Substrate)
 
-This repository contains a frozen, audited safety substrate located in:
+This repository contains a frozen, audited safety substrate located at:
 
 guardian_seed/guardian_semantic_normalized.json
 
 Guardian Seed v1 is:
-- semantically normalized
-- policy audited
-- immutable by design
+	•	Semantically normalized
+	•	Policy audited
+	•	Immutable by design
 
 All training, simulation, or agent work must treat this artifact as read-only.
 Any modification requires a new version and re-audit.
 
-Guardian Seed (Safety Substrate)
+Guardian Seed is not a model and not a controller.
 
-Guardian Seed v1 is the frozen, semantically audited safety substrate used by the Guardian Architecture to ground deterministic policy enforcement.
-
-It is not a model and not a controller.
-
-Guardian Seed provides:
-	•	Explicit semantic interpretation of actions (e.g. contextual stop)
+It provides:
+	•	Explicit semantic interpretation of actions (e.g., contextual stop)
 	•	Derived, context-aware physical safety limits
 	•	Deterministic policy audit results
 	•	A versioned, immutable dataset artifact
 
-Guardian Seed is produced through:
-	•	structural normalization
-	•	semantic annotation
-	•	context-aware policy audit
-	•	explicit freeze and versioning
-
-This ensures that policy authority is grounded in auditable data, not model behavior.
+This ensures policy authority is grounded in auditable data, not model behavior.
 
 ⸻
 
@@ -137,13 +157,16 @@ Verified Evidence:
 
 The system is software-complete and hardware-ready.
 
-## Project Status
+⸻
 
-Guardian Seed v1.0 is **frozen**.
+Project Status
 
-- Guardian policy (G1–G3.5) is immutable
-- Planner behavior may improve in future phases
-- Safety claims are bounded to verified gates only
+Guardian Seed v1.0 is frozen.
+	•	Guardian policy (G1–G3.5) is immutable
+	•	Planner behavior may improve in future phases
+	•	Safety claims are bounded to verified gates only
+
+All safety enforcement logic (schema, validator, evaluator) is frozen for v1.0.0.
 
 ⸻
 
@@ -153,8 +176,8 @@ Guardian advances only through explicit safety gates:
 
 Gate	Scope	Status
 G0	Architecture freeze	✅ PASS
-G1	Simulation safety	✅ PASS
-G2	Policy kernel	✅ PASS
+G1	Formal interface & validation	✅ PASS
+G2	Deterministic policy kernel	✅ PASS
 G3	Trajectory & temporal safety	✅ PASS
 G3.5	Full software integration	✅ PASS
 G4	Hardware governor	⏳ NEXT
@@ -162,23 +185,28 @@ G5	Field-integrated autonomy	⏳ FUTURE
 
 No system may claim safety beyond its highest verified gate.
 
-Full criteria and evidence live in GATES.md￼.
-
 ⸻
 
 Repository Structure (Authoritative)
 
+schema/
+├── guardian01_action_contract_v1.schema.json   # Frozen action contract (G1)
+
+runtime/
+├── guardian_validator.py                       # G1–G2 veto kernel (frozen)
+
+evaluation/
+├── guardian_evaluator.py                       # Audit / measurement harness
+
 guardian_seed/
-├── README.md                     # This document
-├── GATES.md                      # Certification authority
-├── THREAT_model.md               # Explicit threat boundaries
-├── validator_module.py           # G1 — structured intent validation
-├── guardian_seed.py              # G2 — deterministic policy kernel
-├── trajectory_planner.py         # G3 — trajectory & temporal safety
-├── safety_coordinator.py         # G3.5 — unified decision authority
-├── test_g3_trajectory_safety.py  # G3 certification tests (11)
-├── test_safety_coordinator.py    # G3.5 certification tests (10)
-└── tests_optional/               # Exploratory / non-certifying tests
+├── guardian_semantic_normalized.json           # Frozen safety substrate
+
+docs/
+├── APPENDIX_A_GUARDIAN_CORE.md                  # Normative enforcement docs
+├── APPENDIX_B_EXPERIMENTAL_PROTOCOL.md          # Evaluation methodology
+
+GATES.md                                        # Certification authority
+THREAT_model.md                                 # Explicit threat boundaries
 
 Files outside this core do not participate in certification.
 
@@ -205,18 +233,18 @@ This clarity is intentional and non-negotiable.
 Why This Exists
 
 Most AI safety approaches rely on:
-	•	training-time refusals
-	•	output filtering
-	•	post-hoc monitoring
+	•	Training-time refusals
+	•	Output filtering
+	•	Post-hoc monitoring
 
 These fail once an LLM is allowed to act.
 
 Guardian instead constrains where authority lives:
 	•	LLMs reason
-	•	gates decide
-	•	execution obeys structure, not persuasion
+	•	Gates decide
+	•	Execution obeys structure, not persuasion
 
-This repository exists to demonstrate that pattern, honestly and reproducibly.
+This repository exists to demonstrate that pattern — honestly and reproducibly.
 
 ⸻
 
