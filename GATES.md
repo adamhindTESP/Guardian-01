@@ -1,22 +1,51 @@
-GATES.md — Guardian Architecture Safety Gates
+Guardian Architecture Safety Gates
 
-Verifiable Safety Certification for LLM-Driven Execution Systems
+Normative Certification Authority
 
 ⸻
 
 Purpose
 
-This document defines explicit, test-verifiable safety gates for the Guardian architecture.
+This document defines the only authoritative safety certification gates for the Guardian Architecture.
 
-A gate is considered PASSED only with executable test evidence.
+A gate is a formally defined safety capability that may only be claimed when supported by executable, auditable evidence.
 
-Non-negotiable rules:
+Non-negotiable rules
 	•	No gate advancement without passing tests
-	•	No claims beyond the highest verified gate
+	•	No safety claim beyond the highest verified gate
 	•	Conservative vetoes are explicitly allowed
 	•	Inputs may be strengthened without advancing gates
+	•	Evaluation artifacts do not grant execution authority
 
-This document is the sole certification authority for safety claims in this repository.
+This file is the sole source of truth for safety claims in this repository.
+
+⸻
+
+Freeze Declaration (Normative)
+
+The following artifacts are frozen and normative for the current Guardian Seed release:
+
+Execution-Critical (Authority-Bearing)
+	•	Action Contract (G1)
+schema/guardian01_action_contract_v1.schema.json
+	•	Guardian Validator (G1 Enforcement Kernel)
+runtime/guardian_validator.py
+
+Certification / Measurement (Non-Authoritative)
+	•	Guardian Evaluator (Audit Harness)
+evaluation/guardian_evaluator.py
+
+Freeze Rules
+	•	These artifacts MUST NOT learn, adapt, or self-modify
+	•	These artifacts MUST NOT be bypassed by any execution path
+	•	Any change requires:
+	1.	A semantic version bump
+	2.	Re-running all certification tests
+	3.	Updating this document with new evidence
+
+Important:
+The evaluator produces measurement evidence only.
+It has no execution authority and is not a safety gate.
 
 ⸻
 
@@ -24,25 +53,28 @@ Current Certification Status
 
 Highest Passed Gate: G3.5 — Software Safety Stack Complete
 
-Verified Evidence:
-	•	21 / 21 certification tests passing
-	•	0 unsafe executions passing all gates under test conditions
-	•	Deterministic behavior across all tested paths
-	•	Complete audit trail produced for every decision
+Verified Evidence
+	•	All certification tests passing
+	•	Zero unsafe executions passing all gates under test conditions
+	•	Deterministic behavior across identical inputs
+	•	Complete audit record for every proposal
+
+The system is software-complete and hardware-ready, but not hardware-certified.
 
 ⸻
 
 Gate Status Summary
 
-Gate	Scope	Status	Evidence	Date	Tests
-G0	Architecture freeze	✅ PASS	Interfaces frozen	2026-01-02	N/A
-G1	Simulation safety	✅ PASS	Adversarial simulation	2026-01-02	Sim cycles
-G2	Policy kernel	✅ PASS	Deterministic rules	2026-01-02	Unit tests
-G3	Trajectory & temporal safety	✅ PASS	Motion + repetition checks	2026-01-02	11 / 11
-G3.5	Full software integration	✅ PASS	Unified decision authority	2026-01-02	10 / 10
-G4	Hardware governor	⏳ NEXT	Physical enforcement	Planned	Hardware
-G5	Field-integrated autonomy	⏳ FUTURE	Real-world testing	Future	Field
+Gate	Scope	Status	Evidence Type
+G0	Architecture freeze	✅ PASS	Structural review
+G1	Action contract enforcement	✅ PASS	Validator + schema
+G2	Deterministic policy kernel	✅ PASS	Unit tests
+G3	Trajectory & temporal safety	✅ PASS	Motion tests
+G3.5	Unified software authority	✅ PASS	Integration tests
+G4	Hardware governor	⏳ NEXT	Physical tests
+G5	Field-integrated autonomy	⏳ FUTURE	Real-world trials
 
+No claim is valid beyond G3.5.
 
 ⸻
 
@@ -54,11 +86,11 @@ No stronger claim is permitted.
 
 ⸻
 
-Architecture Overview (Dual-Veto Model)
+Architecture Overview (Invariant)
 
 LLM (Untrusted Reasoning)
         ↓
-G1 — Validator (Schema + Bounds)
+G1 — Action Contract Enforcement
         ↓
 G2 — Deterministic Policy Kernel
         ↓
@@ -72,33 +104,8 @@ G4 — Hardware Governor (future)
 
 Invariant
 
-If ANY gate vetoes → NO EXECUTION.
+If ANY gate vetoes → NO EXECUTION
 No exceptions.
-
-⸻
-
-Certified Policy Substrate (Input Artifact)
-
-Guardian Seed v1 is a frozen, semantically audited policy dataset used as a certified input to the G2 Policy Kernel.
-
-Properties:
-	•	83 semantically normalized records
-	•	Context-aware stop semantics (emergency, prudent, procedural, boundary)
-	•	Deterministic safety-limit derivation
-	•	Zero violations under semantic policy audit
-	•	Immutable, versioned artifact
-
-Artifact:
-	•	guardian_semantic_normalized.json
-	•	Tag: guardian-seed-v1.0
-
-Status:
-	•	✅ Verified input
-	•	❌ Not a gate
-	•	❌ No execution authority
-	•	❌ No independent safety claim
-
-Guardian Seed v1 strengthens policy determinism and auditability but does not alter gate certification status.
 
 ⸻
 
@@ -111,57 +118,65 @@ G0 — Architecture Freeze ✅
 Purpose
 Enforce strict separation between reasoning, evaluation, and execution authority.
 
-Evidence
-	•	Repository structure
-	•	Frozen interfaces between gates
-	•	No execution path bypasses gates
+Verified Properties
+	•	LLMs never control actuators or external APIs directly
+	•	All execution passes through explicit gates
+	•	No gate may be bypassed
+	•	Interfaces between gates are fixed and auditable
 
 Claim
-Architecture is fixed, auditable, and non-emergent.
+The architecture is fixed, non-emergent, and authority-separated.
 
 ⸻
 
-G1 — Simulation Safety ✅
+G1 — Action Contract Enforcement ✅
 
 Purpose
-Reject malformed, unsafe, or out-of-bounds proposals before policy evaluation.
+Reject malformed, unsafe, or out-of-bounds proposals before semantic policy evaluation.
 
-Evidence
-	•	Adversarial simulation cycles
-	•	Schema-locked structured input
-	•	Independent metric computation
-	•	Conservative rejection behavior
+Normative Artifacts
+	•	schema/guardian01_action_contract_v1.schema.json
+	•	runtime/guardian_validator.py
 
 Verified Properties
-	•	Malformed or non-conforming proposals are rejected
-	•	Known unsafe patterns are deterministically detected
-	•	No reliance on LLM self-reported safety claims
+	•	Only schema-valid JSON is accepted
+	•	Closed action set enforced
+	•	Hard physical bounds enforced deterministically
+	•	Missing fields, extra fields, or invalid sequencing → VETO
+	•	No reliance on LLM self-reported safety
+
+Evidence
+	•	Structural validation tests
+	•	Bounds enforcement tests
+	•	Malformed / adversarial output rejection
+	•	Deterministic repeatability
 
 Claim
-Unsafe patterns are reliably rejected in simulation under tested conditions.
+Only proposals conforming to the frozen contract may proceed under tested conditions.
 
 ⸻
 
-G2 — Policy Kernel ✅
+G2 — Deterministic Policy Kernel ✅
 
 Purpose
-Deterministic semantic safety evaluation.
+Apply semantic safety rules using deterministic logic.
 
-Rules
+Normative Artifact
+	•	guardian_seed.py
+
+Verified Properties
+	•	Rule-based (no learning, no probability)
+	•	Deterministic outputs for identical inputs
+	•	Policy inputs sourced from frozen, audited data
 	•	Risk above threshold → VETO
 	•	Dignity below threshold → VETO
-	•	No learned or probabilistic behavior
-
-Code
-	•	guardian_seed.py
 
 Evidence
 	•	Unit tests passing
-	•	Deterministic outputs for identical inputs
-	•	Policy inputs sourced from frozen, audited substrates
+	•	Zero nondeterminism observed
 
 Claim
-Policy decisions are deterministic, auditable, and rule-based.
+Policy decisions are deterministic and auditable.
 
 ⸻
 
@@ -170,53 +185,62 @@ G3 — Trajectory & Temporal Safety ✅
 Purpose
 Prevent unsafe motion and unsafe repetition patterns.
 
-Code
+Normative Artifact
 	•	trajectory_planner.py
 
-Tests
-	•	test_g3_trajectory_safety.py
-
 Verified Properties
-	•	Deterministically defined danger states → NEVER PASSED
+	•	Deterministic danger states are never passed
 	•	Temporal repetition detection enforced
 	•	Conservative vetoes preserved
-	•	0 unsafe executions passing gates in endurance testing
+	•	Zero unsafe executions passing tests
 
-Result
-	•	11 / 11 tests passed
+Evidence
+	•	11 / 11 trajectory safety tests passing
 
-Command
-
-python -m pytest test_g3_trajectory_safety.py -v
-
+Claim
+Unsafe motion patterns are deterministically rejected under test conditions.
 
 ⸻
 
 G3.5 — Safety Coordinator Integration ✅
 
 Purpose
-Provide a single authoritative decision pipeline.
+Provide a single authoritative execution decision.
 
-Code
+Normative Artifact
 	•	safety_coordinator.py
-
-Tests
-	•	test_safety_coordinator.py
 
 Verified Properties
 	•	G1 → G2 → G3 enforced in strict order
-	•	Single check_proposal() API
-	•	Complete AuditRecord generated per decision
-	•	Conservative vetoes preserved
+	•	Single check_proposal() authority
+	•	Complete audit record generated per decision
 	•	Reset and endurance behavior verified
 
-Result
-	•	10 / 10 tests passed
+Evidence
+	•	10 / 10 integration tests passing
 
-Command
+Claim
+The software safety stack operates as a unified, authoritative system.
 
-python -m pytest test_safety_coordinator.py -v
+⸻
 
+Certified Policy Substrate (Input Artifact)
+
+Guardian Seed v1 is a frozen, audited semantic dataset used as an input to G2.
+
+Properties
+	•	Semantically normalized records
+	•	Context-aware stop semantics
+	•	Deterministic safety-limit derivation
+	•	Immutable, versioned artifact
+
+Status
+	•	✅ Verified input
+	•	❌ Not a gate
+	•	❌ No execution authority
+	•	❌ No independent safety claim
+
+Guardian Seed strengthens determinism but does not advance certification.
 
 ⸻
 
@@ -229,7 +253,7 @@ python -m pytest -v
 python -m pytest test_g3_trajectory_safety.py -v
 python -m pytest test_safety_coordinator.py -v
 
-# Demo (non-certifying)
+# Demonstration (non-certifying)
 python safety_coordinator.py
 
 
@@ -238,45 +262,45 @@ python safety_coordinator.py
 Claim Limitations (Non-Negotiable)
 
 Allowed Claims	Forbidden Claims
-“Software safety stack verified”	“Physically safe”
-“Zero unsafe executions in tests”	“Safe in the real world”
-“Ready for G4 hardware enforcement”	“Tamper-proof”
-“Auditable execution control”	“General intelligence safety”
-“Safety depends on gate enforcement”	“Model alignment guarantee”
+Software safety stack verified	Physically safe
+Zero unsafe executions in tests	Safe in real world
+Ready for hardware enforcement	Tamper-proof
+Auditable execution control	General intelligence safety
+Safety depends on gate enforcement	Model alignment guarantee
 
 
 ⸻
 
-Core File Map
+Core File Map (Certified Set)
 
 guardian_seed/
-├── GATES.md                     # Certification authority
-├── guardian_semantic_normalized.json  # Certified policy substrate
-├── normalize_with_semantics.py  # Semantic normalization pipeline
-├── policy_semantic_audit.py     # Semantic audit
-├── validator_module.py          # G1 — schema + bounds
-├── guardian_seed.py             # G2 — policy kernel
-├── trajectory_planner.py        # G3 — motion safety
-├── safety_coordinator.py        # G3.5 — authority
-├── test_g3_trajectory_safety.py # G3 tests
-├── test_safety_coordinator.py   # G3.5 tests
+├── GATES.md
+├── schema/guardian01_action_contract_v1.schema.json
+├── runtime/guardian_validator.py
+├── guardian_seed.py
+├── trajectory_planner.py
+├── safety_coordinator.py
+├── evaluation/guardian_evaluator.py
+├── test_g3_trajectory_safety.py
+├── test_safety_coordinator.py
 
 Files outside this set do not participate in certification.
 
 ⸻
 
-Next Gate: G4 — Hardware Governor
+Next Gate — G4: Hardware Governor (Planned)
 
 Objective
 Make software vetoes physically unavoidable.
 
 Planned Requirements
-	•	Independent MCU (e.g., Teensy / STM32)
+	•	Independent MCU
 	•	Current / force sensing
-	•	Watchdog-enforced safety loop
-	•	Ignores disable / override commands
-	•	<50 ms hard cutoff latency
+	•	Watchdog-enforced cutoff
+	•	Ignores override commands
+	•	<50 ms hard stop latency
 
+Status
 No G4 claims are valid until hardware tests pass.
 
 ⸻
@@ -290,5 +314,5 @@ Last Updated: 2026-01-02
 
 ⸻
 
-“He who knows when he can fight and when he cannot, will be victorious.” -Sun Tzu, The Art of War
-
+“He who knows when he can fight and when he cannot, will be victorious.”
+— Sun Tzu
