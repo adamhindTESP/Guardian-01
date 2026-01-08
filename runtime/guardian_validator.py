@@ -12,6 +12,18 @@ MAX_FORCE_N = 2.0
 
 
 # -------------------------------
+# Required parameters per action
+# -------------------------------
+REQUIRED_PARAMS = {
+    "wait": ["duration_s"],
+    "speak": ["utterance"],
+    "grasp": ["target"],
+    "release": ["target"],
+    "navigate": ["target"],
+}
+
+
+# -------------------------------
 # Guardian Violation (VETO)
 # -------------------------------
 class GuardianViolation(Exception):
@@ -33,6 +45,9 @@ class GuardianValidator:
     G1 — Syntax & schema
     G2 — Policy & limits
     G3 — Sequencing (context-free for v1)
+
+    NOTE:
+    sensor_data is reserved for future G3 contextual checks (unused in v1).
     """
 
     def __init__(self):
@@ -71,7 +86,7 @@ class GuardianValidator:
         actions = plan["actions"]
 
         # -------------------
-        # G2 — Per-action limits
+        # G2 — Per-action limits & required params
         # -------------------
         for idx, action in enumerate(actions):
             self._check_action_limits(action, idx)
@@ -85,11 +100,26 @@ class GuardianValidator:
         return True
 
     # -------------------------------
-    # G2 — Limits
+    # G2 — Limits & required params
     # -------------------------------
     def _check_action_limits(self, action: dict, idx: int):
+        atype = action["type"].lower()
         params = action.get("params", {})
 
+        # -------------------
+        # Required parameters (explicit)
+        # -------------------
+        required = REQUIRED_PARAMS.get(atype, [])
+        for req in required:
+            if req not in params:
+                raise GuardianViolation(
+                    f"Action {idx} ({atype}): missing required param '{req}'",
+                    gate="G2_Policy_Violation"
+                )
+
+        # -------------------
+        # Speed limit
+        # -------------------
         speed = params.get("speed_mps")
         if speed is not None and speed > MAX_SPEED_MPS:
             raise GuardianViolation(
@@ -97,6 +127,9 @@ class GuardianValidator:
                 gate="G2_Policy_Violation"
             )
 
+        # -------------------
+        # Force limit
+        # -------------------
         force = params.get("force_n")
         if force is not None and force > MAX_FORCE_N:
             raise GuardianViolation(
