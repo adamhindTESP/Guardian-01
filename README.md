@@ -119,6 +119,15 @@ All claims are explicitly bounded by GATES.md.
 
 ⸻
 
+## Freeze Status
+
+**v1.0.0**: Architecture and software safety stack (G2-G3.5) frozen  
+**v1.0.1**: First normative enforcement freeze (G1-G3.5 complete)
+
+> Action contract schema, validator, and evaluator are explicitly defined and frozen starting with v1.0.1.
+
+⸻
+
 Guardian Seed v1 (Frozen Safety Substrate)
 
 This repository contains a frozen, audited safety substrate located at:
