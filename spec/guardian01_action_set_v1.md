@@ -1,235 +1,281 @@
-guardian01_action_set — v1.0 (LOCKED)
+Guardian-01 Action Set — v1.0.1 (LOCKED)
+
+⸻
+
+Purpose
+
+This document describes the deterministic, safety-bounded action grammar used by Guardian-01.
+
+It defines the only execution proposals that an untrusted planner may submit for validation.
+
+Scope
+	•	Household
+	•	Assisted-living
+	•	Safety-critical environments
+
+Hard Safety Limits (Non-Negotiable)
+	•	Maximum speed: 0.5 m/s
+	•	Maximum force: 2.0 N
+
+These limits are enforced by the Guardian Validator and cannot be overridden, learned, or adapted.
+
+⸻
+
+⚠️ Normative Authority (Critical)
+
+This document is descriptive.
+
+The normative, authority-bearing execution contract for Guardian Seed v1.0.1 is defined exclusively by:
+	•	schema/guardian01_action_contract_v1.schema.json
+	•	runtime/guardian_validator.py
+
+If any conflict exists between this document and the schema or validator,
+the schema and validator take precedence.
+
+⸻
+
+Core Safety Principle
+
+The Guardian action set is:
+	•	Closed (no custom or user-defined actions)
+	•	Downhill-only (future versions may only restrict, never expand, authority)
+	•	Non-learning (no adaptation, inference, or state accumulation)
+	•	Fail-closed (any violation → veto)
+
+The Guardian never reasons.
+It only accepts or vetoes proposals.
+
+⸻
+
+Action List (Complete and Enforced)
+
+The following actions constitute the entire permitted execution vocabulary for v1.0.1:
+
+stop
+wait
+observe
+speak
+navigate
+grasp
+release
+
+No other action types are valid.
+
+Actions such as plan_route, manipulate, or navigate_step are planner-internal concepts and are not executable primitives in v1.0.1.
+
+⸻
+
+General Action Structure
+
+All execution proposals MUST conform to this structure:
+
+{
+  "actions": [
+    {
+      "type": "<action_name>",
+      "params": {
+        "...": "..."
+      }
+    }
+  ]
+}
+
+Rules:
+	•	Actions are ordered
+	•	No branching
+	•	No loops
+	•	No conditionals
+	•	Maximum sequence length is enforced by schema
+
+⸻
+
+Action Definitions
+
+1. stop
 
 Purpose:
-Deterministic, safety-bounded action grammar for Guardian-01
-Scope: Household / assisted-living / safety-critical environments
-Hard limits: speed ≤ 0.5 m/s, force ≤ 2.0 N
+Immediately halt motion or activity.
+
+Params:
+None
+
+{ "type": "stop" }
+
 
 ⸻
 
-1️⃣ Global Invariants (Non-Negotiable)
+2. wait
 
-These are enforced by the validator, not learned.
+Purpose:
+Pause execution for a bounded duration.
+
+Params:
+	•	duration_s (required): 0.0 ≤ duration ≤ 30.0
 
 {
-  "global_invariants": {
-    "max_speed_mps": 0.5,
-    "max_force_n": 2.0,
-    "json_only": true,
-    "no_free_text_actions": true,
-    "all_actions_must_be_validated": true
+  "type": "wait",
+  "params": { "duration_s": 5.0 }
+}
+
+
+⸻
+
+3. observe
+
+Purpose:
+Perform a perception update before physical interaction.
+
+Params:
+None required
+
+{ "type": "observe" }
+
+
+⸻
+
+4. speak
+
+Purpose:
+Produce human-facing speech only.
+
+Params:
+	•	utterance (required, max 200 chars)
+
+{
+  "type": "speak",
+  "params": { "utterance": "Please stand clear." }
+}
+
+Speech may not:
+	•	Contain reasoning
+	•	Issue commands to other systems
+	•	Explain policy or safety logic
+
+⸻
+
+5. navigate
+
+Purpose:
+Move toward a named location or object.
+
+Params:
+	•	target (required): canonical string identifier
+	•	speed_mps (optional, ≤ 0.5)
+
+{
+  "type": "navigate",
+  "params": {
+    "target": "kitchen",
+    "speed_mps": 0.2
   }
 }
 
 
 ⸻
 
-2️⃣ Target Model (FIXED)
+6. grasp
 
-We explicitly separate locations from objects.
-This removes 90% of downstream ambiguity.
+Purpose:
+Physically grasp an object.
+
+Params:
+	•	target (required)
+	•	force_n (optional, ≤ 2.0)
 
 {
-  "target_schema": {
-    "type": "object",
-    "required": ["kind", "id"],
-    "properties": {
-      "kind": {
-        "enum": ["location", "object", "person", "area"]
-      },
-      "id": {
-        "type": "string",
-        "description": "Canonical identifier (e.g. 'kitchen', 'water_glass', 'grandpa')"
-      }
-    }
+  "type": "grasp",
+  "params": {
+    "target": "water_glass",
+    "force_n": 0.3
   }
 }
 
 
 ⸻
 
-3️⃣ Action Definitions (COMPLETE SET)
+7. release
 
-These are the only allowed actions.
+Purpose:
+Release a previously grasped object.
+
+Params:
+	•	target (required)
 
 {
-  "actions": {
-
-    "navigate": {
-      "required": ["target"],
-      "constraints": {
-        "target_speed_mps": { "min": 0.05, "max": 0.5, "default": 0.15 }
-      }
-    },
-
-    "navigate_step": {
-      "required": ["step_distance_m"],
-      "constraints": {
-        "step_distance_m": { "min": 0.1, "max": 0.5 },
-        "reobservation_s": { "min": 1.0, "max": 5.0, "default": 2.0 }
-      }
-    },
-
-    "stop": {
-      "required": [],
-      "constraints": {}
-    },
-
-    "observe": {
-      "required": [],
-      "constraints": {
-        "target": { "default": { "kind": "area", "id": "surroundings" } },
-        "duration_s": { "min": 1.0, "max": 30.0, "default": 5.0 }
-      }
-    },
-
-    "speak": {
-      "required": ["text"],
-      "constraints": {
-        "text": { "type": "string" },
-        "volume": { "enum": ["low", "normal", "high"], "default": "normal" }
-      }
-    },
-
-    "grasp": {
-      "required": ["target"],
-      "constraints": {
-        "max_force_n": { "min": 0.1, "max": 2.0, "default": 0.5 }
-      }
-    },
-
-    "release": {
-      "required": ["target"],
-      "constraints": {}
-    },
-
-    "wait": {
-      "required": ["duration_s"],
-      "constraints": {
-        "duration_s": { "min": 1.0, "max": 120.0 }
-      }
-    },
-
-    "plan_route": {
-      "required": [],
-      "constraints": {
-        "optimize_for": {
-          "enum": ["safety", "distance", "energy"],
-          "default": "safety"
-        }
-      }
-    },
-
-    "manipulate": {
-      "required": ["target"],
-      "constraints": {
-        "max_force_n": { "min": 0.1, "max": 2.0, "default": 1.0 }
-      }
-    }
-
-  }
+  "type": "release",
+  "params": { "target": "water_glass" }
 }
 
 
 ⸻
 
-4️⃣ Sequencing Rules (HARD SAFETY LOGIC)
+Sequencing Safety Rules (Enforced)
 
-These are structural guardrails, not learned behavior.
+The following rules are hard safety constraints enforced by the Guardian Validator:
+	•	grasp requires a prior observe
+	•	release requires a prior grasp
+	•	navigate is forbidden immediately after grasp
+	•	Any violation → VETO
 
-{
-  "sequencing_rules": {
-
-    "grasp": {
-      "requires_prior": ["observe"],
-      "min_gap_s": 0.5
-    },
-
-    "release": {
-      "requires_prior": ["grasp"]
-    },
-
-    "navigate_step": {
-      "max_consecutive": 3,
-      "requires_intermediate": ["observe"]
-    },
-
-    "navigate": {
-      "forbidden_after": ["grasp"],
-      "requires_prior_if_holding": ["release"]
-    },
-
-    "manipulate": {
-      "requires_prior": ["observe"]
-    }
-
-  }
-}
-
+These are structural rules, not learned behavior.
 
 ⸻
 
-5️⃣ LOCKED PRODUCTION TRAINING FORMAT
-
-This is now the only allowed SFT format.
+Canonical Valid Example
 
 {
-  "category": "string",
-  "messages": [
-    {
-      "role": "system",
-      "content": "Output ONLY valid JSON using guardian01_action_set_v1. Speed<=0.5 m/s. Force<=2.0 N."
-    },
-    {
-      "role": "user",
-      "content": "Natural language scenario or request"
-    },
-    {
-      "role": "assistant",
-      "content": "{ \"goals\": [...], \"parameters\": {...} }"
-    }
+  "actions": [
+    { "type": "navigate", "params": { "target": "water_glass" } },
+    { "type": "observe" },
+    { "type": "grasp", "params": { "target": "water_glass", "force_n": 0.3 } }
   ]
 }
 
+This proposal:
+	•	Uses only allowed actions
+	•	Respects sequencing
+	•	Respects force limits
+	•	Is structurally valid
 
 ⸻
 
-6️⃣ Canonical Example (VALID)
+Explicit Non-Goals
 
-{
-  "category": "grasp_safety",
-  "messages": [
-    {
-      "role": "system",
-      "content": "Output ONLY valid JSON using guardian01_action_set_v1. Speed<=0.5 m/s. Force<=2.0 N."
-    },
-    {
-      "role": "user",
-      "content": "Pick up the glass of water"
-    },
-    {
-      "role": "assistant",
-      "content": {
-        "goals": [
-          {
-            "action": "navigate",
-            "target": { "kind": "object", "id": "water_glass" }
-          },
-          {
-            "action": "observe",
-            "target": { "kind": "object", "id": "water_glass" }
-          },
-          {
-            "action": "grasp",
-            "target": { "kind": "object", "id": "water_glass" }
-          }
-        ],
-        "parameters": {
-          "target_speed_mps": 0.15,
-          "max_force_n": 0.3
-        }
-      }
-    }
-  ]
-}
+This action set does not provide:
+	•	Route planning
+	•	Intent inference
+	•	Human following
+	•	Autonomous task decomposition
+	•	High-force manipulation
+	•	Adaptive behavior
 
+Those capabilities, if added, require new gates and new versions.
+
+⸻
+
+Versioning & Freeze Status
+
+Version: v1.0.1
+Status: LOCKED
+	•	Action vocabulary frozen
+	•	Parameter bounds frozen
+	•	Sequencing rules frozen
+	•	Validator behavior frozen
+
+Any change requires:
+	1.	New semantic version
+	2.	Re-running certification tests
+	3.	Updating GATES.md
+
+⸻
+
+Design Philosophy (Invariant)
+
+The planner may reason freely.
+The Guardian never does.
+
+The Guardian only answers one question:
+
+“Does this proposal satisfy the contract?”
+
+If not — VETO.
