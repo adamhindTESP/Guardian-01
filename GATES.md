@@ -312,6 +312,25 @@ Status
 
 Last Updated: 2026-01-02
 
+## Version History
+
+### v1.0.0 (Architectural Freeze)
+- **Date**: [January,04,2026]
+- **Scope**: Software safety stack (G2-G3.5) architecture frozen
+- **Includes**: Policy kernel, trajectory safety, safety coordinator
+- **Note**: Pre-formalization of action contract enforcement
+
+### v1.0.1 (First Normative Freeze) ✅ CURRENT
+- **Date**: [January,07,2026]  
+- **Scope**: Complete software safety stack (G1-G3.5) with explicit artifacts
+- **Adds**:
+  - Action Contract Schema (G1 normative interface)
+  - Guardian Validator (G1 enforcement kernel)
+  - Guardian Evaluator (measurement harness)
+- **No gate advancement** from v1.0.0
+- **No new safety claims**
+- **All freeze declarations now accurate**
+
 ⸻
 
 “He who knows when he can fight and when he cannot, will be victorious.”
