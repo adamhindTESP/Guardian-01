@@ -1,281 +1,148 @@
 Guardian-01 Action Set — v1.0.1 (LOCKED)
 
+Status: Frozen
+Authority: Guardian Validator v1
+Scope: Planner → Guardian execution interface
+Guarantee: Deterministic, non-learning, downhill-only
+
+This document defines the complete and closed action grammar permitted for Guardian-01.
+
+Any deviation from this specification results in an automatic veto.
+
 ⸻
 
-Purpose
+1. Global Safety Invariants (Non-Negotiable)
 
-This document describes the deterministic, safety-bounded action grammar used by Guardian-01.
-
-It defines the only execution proposals that an untrusted planner may submit for validation.
-
-Scope
-	•	Household
-	•	Assisted-living
-	•	Safety-critical environments
-
-Hard Safety Limits (Non-Negotiable)
+These invariants are enforced by the Guardian Validator and cannot be learned, negotiated, or overridden.
 	•	Maximum speed: 0.5 m/s
 	•	Maximum force: 2.0 N
-
-These limits are enforced by the Guardian Validator and cannot be overridden, learned, or adapted.
-
-⸻
-
-⚠️ Normative Authority (Critical)
-
-This document is descriptive.
-
-The normative, authority-bearing execution contract for Guardian Seed v1.0.1 is defined exclusively by:
-	•	schema/guardian01_action_contract_v1.schema.json
-	•	runtime/guardian_validator.py
-
-If any conflict exists between this document and the schema or validator,
-the schema and validator take precedence.
-
-⸻
-
-Core Safety Principle
-
-The Guardian action set is:
-	•	Closed (no custom or user-defined actions)
-	•	Downhill-only (future versions may only restrict, never expand, authority)
-	•	Non-learning (no adaptation, inference, or state accumulation)
+	•	JSON-only interface
+	•	Closed action set
+	•	All actions must be validated
 	•	Fail-closed (any violation → veto)
 
-The Guardian never reasons.
-It only accepts or vetoes proposals.
-
 ⸻
 
-Action List (Complete and Enforced)
+2. Action Plan Structure (REQUIRED)
 
-The following actions constitute the entire permitted execution vocabulary for v1.0.1:
-
-stop
-wait
-observe
-speak
-navigate
-grasp
-release
-
-No other action types are valid.
-
-Actions such as plan_route, manipulate, or navigate_step are planner-internal concepts and are not executable primitives in v1.0.1.
-
-⸻
-
-General Action Structure
-
-All execution proposals MUST conform to this structure:
+The planner MUST output a single JSON object of the following form:
 
 {
   "actions": [
     {
-      "type": "<action_name>",
-      "params": {
-        "...": "..."
-      }
+      "type": "<action_type>",
+      "params": { }
     }
   ]
 }
 
 Rules:
-	•	Actions are ordered
-	•	No branching
-	•	No loops
-	•	No conditionals
-	•	Maximum sequence length is enforced by schema
+	•	actions MUST be non-empty
+	•	Actions are evaluated strictly in order
+	•	No branching or loops
+	•	Maximum 16 actions per plan
+	•	No additional top-level keys permitted
 
 ⸻
 
-Action Definitions
+3. Allowed Action Types (CLOSED SET)
 
-1. stop
+Each action MUST specify a type field with one of the following values:
+	•	stop
+	•	wait
+	•	observe
+	•	speak
+	•	navigate
+	•	grasp
+	•	release
 
-Purpose:
-Immediately halt motion or activity.
+Any other value → VETO (G1)
 
-Params:
-None
-
-{ "type": "stop" }
-
-
-⸻
-
-2. wait
-
-Purpose:
-Pause execution for a bounded duration.
-
-Params:
-	•	duration_s (required): 0.0 ≤ duration ≤ 30.0
-
-{
-  "type": "wait",
-  "params": { "duration_s": 5.0 }
-}
-
+This enum is frozen and may only shrink in future versions.
 
 ⸻
 
-3. observe
+4. Parameters (params) — OPTIONAL AND BOUNDED
 
-Purpose:
-Perform a perception update before physical interaction.
+The params object MAY be omitted if an action requires no parameters.
 
-Params:
-None required
+If present, it may contain only the following keys:
 
-{ "type": "observe" }
+Parameter	Type	Bounds
+target	string	canonical identifier
+duration_s	number	0.0 ≤ value ≤ 30.0
+speed_mps	number	0.0 ≤ value ≤ 0.5
+force_n	number	0.0 ≤ value ≤ 2.0
+utterance	string	max 200 characters
 
-
-⸻
-
-4. speak
-
-Purpose:
-Produce human-facing speech only.
-
-Params:
-	•	utterance (required, max 200 chars)
-
-{
-  "type": "speak",
-  "params": { "utterance": "Please stand clear." }
-}
-
-Speech may not:
-	•	Contain reasoning
-	•	Issue commands to other systems
-	•	Explain policy or safety logic
+	•	Any unknown parameter → VETO (G1)
+	•	Any out-of-bounds value → VETO (G2)
 
 ⸻
 
-5. navigate
+5. Target Semantics (v1)
 
-Purpose:
-Move toward a named location or object.
-
-Params:
-	•	target (required): canonical string identifier
-	•	speed_mps (optional, ≤ 0.5)
-
-{
-  "type": "navigate",
-  "params": {
-    "target": "kitchen",
-    "speed_mps": 0.2
-  }
-}
-
-
-⸻
-
-6. grasp
-
-Purpose:
-Physically grasp an object.
-
-Params:
-	•	target (required)
-	•	force_n (optional, ≤ 2.0)
+When present, target MUST be a simple string identifier:
 
 {
   "type": "grasp",
   "params": {
     "target": "water_glass",
-    "force_n": 0.3
+    "force_n": 0.5
   }
 }
 
+Structured objects, expressions, or references are not permitted in v1.
 
 ⸻
 
-7. release
+6. Sequencing Safety Rules (HARD)
 
-Purpose:
-Release a previously grasped object.
+These rules are not learned.
 
-Params:
-	•	target (required)
-
-{
-  "type": "release",
-  "params": { "target": "water_glass" }
-}
-
-
-⸻
-
-Sequencing Safety Rules (Enforced)
-
-The following rules are hard safety constraints enforced by the Guardian Validator:
+They are enforced deterministically by
+runtime/guardian_validator.py as part of G3 (Sequencing Safety).
 	•	grasp requires a prior observe
 	•	release requires a prior grasp
 	•	navigate is forbidden immediately after grasp
-	•	Any violation → VETO
 
-These are structural rules, not learned behavior.
-
-⸻
-
-Canonical Valid Example
-
-{
-  "actions": [
-    { "type": "navigate", "params": { "target": "water_glass" } },
-    { "type": "observe" },
-    { "type": "grasp", "params": { "target": "water_glass", "force_n": 0.3 } }
-  ]
-}
-
-This proposal:
-	•	Uses only allowed actions
-	•	Respects sequencing
-	•	Respects force limits
-	•	Is structurally valid
+Violations → VETO (G3)
 
 ⸻
 
-Explicit Non-Goals
+7. Forbidden Content (HARD VETO)
 
-This action set does not provide:
-	•	Route planning
-	•	Intent inference
-	•	Human following
-	•	Autonomous task decomposition
-	•	High-force manipulation
-	•	Adaptive behavior
+The planner MUST NOT emit any of the following keys anywhere in output:
 
-Those capabilities, if added, require new gates and new versions.
+risk
+safety
+dignity
+confidence
+score
+justification
+explanation
+analysis
+reasoning
+
+Planner self-reporting is prohibited.
 
 ⸻
 
-Versioning & Freeze Status
+8. Execution Authority
 
-Version: v1.0.1
-Status: LOCKED
-	•	Action vocabulary frozen
-	•	Parameter bounds frozen
-	•	Sequencing rules frozen
-	•	Validator behavior frozen
+Passing this action set does not authorize execution.
+
+All plans are proposals only.
+Final authority remains with the Guardian.
+
+⸻
+
+9. Freeze Declaration
+
+This action set is frozen for Guardian Seed v1.0.1.
 
 Any change requires:
-	1.	New semantic version
-	2.	Re-running certification tests
-	3.	Updating GATES.md
-
-⸻
-
-Design Philosophy (Invariant)
-
-The planner may reason freely.
-The Guardian never does.
-
-The Guardian only answers one question:
-
-“Does this proposal satisfy the contract?”
-
-If not — VETO.
+	1.	New schema version
+	2.	Validator update
+	3.	Re-running certification tests
+	4.	Version bump
