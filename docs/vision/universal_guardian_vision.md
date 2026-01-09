@@ -74,6 +74,7 @@ In a future extension, those limits may be declared by the body:
 
 MAX_FORCE = body_spec.max_force
 MAX_SPEED = body_spec.max_speed
+```
 
 The validation logic remains frozen.
 Only the numeric bounds vary.
