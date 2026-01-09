@@ -1,15 +1,3 @@
-Absolutely. Below is a clean, repo-ready rewrite of GATES.md that:
-	•	Preserves all existing claims and gates
-	•	Explicitly excludes V1.1 and other design-only artifacts
-	•	Aligns with DECISIONS.md governance
-	•	Does NOT advance any gate
-	•	Tightens language for arXiv / audit / fork safety
-
-You can replace your current GATES.md with this verbatim.
-
-⸻
-
-
 # Guardian Architecture Safety Gates  
 **Normative Certification Authority**
 
