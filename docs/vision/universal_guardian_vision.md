@@ -193,6 +193,6 @@ Guardian Seed Project. Conceptual framework only.
 
 ⸻
 
-Last Updated: 2026-01-XX
+Last Updated: 2026-01-08
 Document Type: Vision / Future Work
 Authority: None
