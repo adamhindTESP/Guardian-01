@@ -1,11 +1,3 @@
-Here is a clean, tightened, repo-ready rewrite of
-docs/appendix_v1_1_adversarial_threats.md, aligned with your gates, your honesty standard, and the work you’ve already done.
-
-This version is normative in tone but non-certifying, explicitly preserves gate integrity, and clearly separates documented threats, implemented mitigations, and known limits.
-
-⸻
-
-
 # Appendix — V1.1 Adversarial Threats & Hardening Plan  
 **Status:** DESIGN-ONLY (NOT EVALUATED)  
 **Applies To:** Guardian Validator V1.1 (Hardening Layer Only)
