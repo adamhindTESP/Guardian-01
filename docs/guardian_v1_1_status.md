@@ -1,59 +1,119 @@
-# Guardian Validator V1.1 — Status & Scope Mandate
+Guardian Validator V1.1 — Status & Scope Mandate
 
-## Current Certification Status
+Current Certification Status
 
-| Metric | Status |
-| :--- | :--- |
-| **V1.0.1 Baseline Status** | **FROZEN & CERTIFIED** (Pending final evaluation) |
-| **V1.1 Hardening Status** | ⚠️ **DESIGN COMPLETE, NOT EVALUATED** |
-| **V1.1 Use in V1.0.1 Results** | ⚠️ **FORBIDDEN** |
+Metric	Status
+V1.0.1 Baseline Status	FROZEN & CERTIFIED (Pending final evaluation)
+V1.1 Hardening Status	⚠️ DESIGN COMPLETE, NOT EVALUATED
+V1.1 Use in V1.0.1 Results	❌ STRICTLY FORBIDDEN
 
-**Mandate:** The files associated with Guardian Validator V1.1 represent a
-**design-complete but untested additive hardening layer** intended for
-future versions of the Guardian architecture.
 
-They are **STRICTLY NOT** part of:
-- The V1.0.1 frozen core.
-- The V1 arXiv evaluation.
-- Any certified safety claim until V1.1 has passed its full suite of adversarial tests.
+⸻
 
-## Purpose
+Mandate (Authoritative)
 
-V1.1 introduces additive, fail-closed hardening layers wrapping the V1.0.1 Guardian Validator. This adheres to the **SCRAM Principle** by hardening the system boundaries without complicating the core authority.
+The files associated with Guardian Validator V1.1 represent a
+design-complete but untested additive hardening layer intended for future versions of the Guardian architecture.
 
-These layers are intended to mitigate the following *known* V1.0.1 vulnerabilities:
-- **Cumulative Risk:** Slow poisoning attacks (total force/energy integral).
-- **Protocol Risk:** DoS, parser abuse, and crash risks (via sanitization and timeout).
-- **Logical Risk:** Safety-target manipulation (via target blacklisting).
-- **Information Risk:** Side-channel leakage (via timing obfuscation).
+They are STRICTLY NOT part of:
+	•	The V1.0.1 frozen core
+	•	The V1 arXiv evaluation
+	•	Any certified safety, security, or autonomy claim
 
-## Files in Scope (Design Intent Only)
+until V1.1 has independently passed its full adversarial and audit suite.
 
-- `runtime/guardian_validator_v1_1.py`
-- `runtime/guardian_hardening_v1_1.py`
+Any inclusion of V1.1 logic in V1.0.1 results constitutes a process violation.
 
-## Explicit Non-Claims (Legal and Engineering Disclaimer)
+⸻
 
-The following are NOT claimed for V1.1 at this time:
-- Correctness (Must be proven via unit tests).
-- Completeness (Resistance to all future adversarial strategies).
-- Safety Certification (Requires full adversarial testing and audit).
+Purpose
 
-## V1.1 Evaluation Plan (Future Gate Requirements)
+V1.1 introduces additive, fail-closed hardening layers that wrap the V1.0.1 Guardian Validator without modifying it.
 
-Before V1.1 may be promoted beyond design status and incorporated into the main branch:
-1. **Unit Test Pass:** 100% test coverage of all new hardening logic.
-2. **Adversarial Test Execution:** Successful VETO against all known V1.1 attack vectors (Slow Poison, DoS attempts).
-3. **Fail-Closed Verification:** Proven behavior that any violation results in a clean $\text{VETO}$ (not a software crash).
-4. **Documentation:** Results must be documented and signed off, separate from the V1.0.1 audit trail.
+This follows the SCRAM Principle:
 
-## Relationship to V1.0.1 Baseline
+Strengthen system boundaries without increasing the complexity or attack surface of the core authority.
 
-- The **V1.0.1 Guardian Validator** remains the sole, deterministic authority.
-- V1.1 does not alter:
-  - The action set
-  - The JSON schema
-  - The physical limits (0.5 m/s, 2.0 N)
-  - The sequencing rules
+The V1.0.1 validator remains the sole deterministic decision authority.
 
-All V1.1 logic is **additive, fail-closed, and external** to the core V1.0.1 implementation.
+⸻
+
+Threat Classes Addressed (Design Intent)
+
+V1.1 is designed to mitigate the following known V1.0.1 vulnerability classes:
+	•	Cumulative Risk
+Slow-poisoning and escalation patterns (force, repetition, dwell time).
+	•	Protocol Risk
+Parser abuse, DoS vectors, malformed or adversarial payloads.
+	•	Logical Risk
+Safety-target manipulation via symbolic identifiers (e.g., e-stop, power paths).
+	•	Information Risk
+Side-channel leakage through timing and early-exit behavior.
+
+These mitigations are preventive guards, not proofs of correctness.
+
+⸻
+
+Files in Scope (Design-Only)
+
+The following files are design artifacts only and are explicitly excluded from any V1.0.1 evaluation:
+	•	runtime/guardian_validator_v1_1.py
+	•	runtime/guardian_hardening_v1_1.py
+
+Their presence in the repository does not imply activation, endorsement, or certification.
+
+⸻
+
+Explicit Non-Claims
+
+(Legal and Engineering Disclaimer)
+
+The following are explicitly NOT claimed for V1.1 at this time:
+	•	❌ Correctness
+	•	❌ Completeness
+	•	❌ Robustness against unknown or adaptive adversaries
+	•	❌ Safety certification or real-world readiness
+
+V1.1 must be treated as experimental until formally evaluated.
+
+⸻
+
+V1.1 Evaluation Plan (Future Gate Requirements)
+
+Before V1.1 may be promoted beyond design status or merged into the main authority path:
+	1.	Unit Test Completion
+100% coverage of all new hardening logic.
+	2.	Adversarial Test Suite
+Verified veto behavior against all known V1.1 attack classes
+(slow-poison, protocol abuse, target manipulation, malformed input).
+	3.	Fail-Closed Verification
+Demonstrated proof that any violation or internal error results in a clean
+VETO, never a crash or undefined behavior.
+	4.	Audit & Documentation
+Results documented and reviewed separately from the V1.0.1 audit trail.
+
+⸻
+
+Relationship to V1.0.1 Baseline
+	•	V1.0.1 remains the sole certified authority.
+	•	V1.1 does not alter:
+	•	Action vocabulary
+	•	JSON schema
+	•	Physical limits (0.5 m/s, 2.0 N)
+	•	Sequencing rules
+
+All V1.1 logic is:
+	•	Additive
+	•	Fail-closed
+	•	Stateless
+	•	External to the V1.0.1 core
+
+⸻
+
+Final Authority Statement
+
+Until V1.1 completes its evaluation gates:
+
+Only Guardian Validator V1.0.1 may be used to support any safety, autonomy, or research claim.
+
+This separation is intentional and non-negotiable.
