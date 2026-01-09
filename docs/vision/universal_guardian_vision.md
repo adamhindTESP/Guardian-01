@@ -1,17 +1,3 @@
-You’re right to pause, and the combined feedback you collected is excellent. The key now is to encode the vision without contaminating the certified work, without hype language in the wrong places, and without turning your repo into something reviewers or collaborators misread as claims.
-
-What you want is a clean, disciplined “north-star” document that:
-	•	explicitly does not add capability claims
-	•	explicitly does not modify gate scope
-	•	captures the why and direction behind Guardian
-	•	preserves your deeply human, benevolent intent without mysticism bleeding into engineering artifacts
-
-Below is a ready-to-drop vision document that does exactly that.
-
-⸻
-
-docs/vision/universal_guardian_vision.md
-
 # Universal Guardian — Long-Term Architectural Vision
 
 **Status:** Conceptual / Non-Normative  
