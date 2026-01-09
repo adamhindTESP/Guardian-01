@@ -197,6 +197,41 @@ Reject malformed, unsafe, or out-of-bounds proposals before semantic policy eval
 - Malformed / adversarial output rejection
 - Deterministic repeatability
 
+Failsafe Robustness (G1 — Non-Negotiable Property)
+
+Purpose
+Ensure that the G1 enforcement kernel fails closed under all malformed, adversarial, or pathological inputs, and never crashes, hangs, or passes execution due to internal error.
+
+Scope
+This subsection strengthens G1’s enforcement guarantees.
+It does not introduce a new gate and does not expand safety claims beyond G1.
+
+Verified Properties
+	•	Empty input → VETO
+	•	Malformed JSON → VETO
+	•	Incomplete JSON → VETO
+	•	Unicode floods / bombs → VETO
+	•	Deeply nested or pathological structures → VETO
+	•	Null bytes or invalid control characters → VETO
+	•	Any unexpected internal exception → VETO (fail-closed)
+
+At no point may the validator:
+	•	crash,
+	•	hang,
+	•	raise an uncaught exception, or
+	•	return execution authority.
+
+Normative Artifact
+	•	runtime/guardian_validator.py
+
+Evidence
+	•	tests/test_failsafe_basic.py
+
+Claim (Bounded)
+The G1 validator is robust against malformed and adversarial inputs and deterministically produces a VETO rather than failing open under all tested pathological conditions.
+
+This property strengthens enforcement reliability but does not advance gate status.
+
 **Claim**  
 Only proposals conforming to the frozen contract may proceed under tested conditions.
 
