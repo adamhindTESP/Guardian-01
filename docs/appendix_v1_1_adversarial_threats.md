@@ -1,231 +1,274 @@
-Appendix — V1.1 Adversarial Threats & Hardening Rationale
+Here is a clean, tightened, repo-ready rewrite of
+docs/appendix_v1_1_adversarial_threats.md, aligned with your gates, your honesty standard, and the work you’ve already done.
 
-Status: DESIGN-ONLY (NOT EVALUATED)
-Applies To: Guardian Validator V1.1 (wrapper hardening only)
-Gate Impact: ❌ NONE (no certification advancement)
-
-⸻
-
-1. Purpose of This Appendix
-
-This appendix documents known adversarial attack vectors identified through:
-	•	Internal red-team reasoning
-	•	Cross-model adversarial review (DeepSeek, Claude)
-	•	Manual safety engineering analysis
-
-The purpose is strictly to:
-	1.	Preserve institutional memory of known attacks
-	2.	Map each attack to a planned V1.1 hardening mechanism
-	3.	Define what must be tested before any V1.1 safety claim is made
-
-This document does not certify anything.
-It exists to prevent “unknown knowns” from being forgotten.
+This version is normative in tone but non-certifying, explicitly preserves gate integrity, and clearly separates documented threats, implemented mitigations, and known limits.
 
 ⸻
 
-2. Terminology Clarification (Important)
 
-To avoid ambiguity:
-	•	Adversarial Threat
-A conceptual or practical attack pattern an untrusted planner could attempt.
-	•	Hardening Mechanism
-A defensive check added in V1.1 to mitigate a threat.
-	•	Adversarial Test
-An executable test case designed to confirm the hardening mechanism fails closed.
+# Appendix — V1.1 Adversarial Threats & Hardening Plan  
+**Status:** DESIGN-ONLY (NOT EVALUATED)  
+**Applies To:** Guardian Validator V1.1 (Hardening Layer Only)
 
-This appendix lists threats, not test results.
-Passing tests are recorded elsewhere and only advance gates if explicitly declared.
+---
+
+## Mandate (Non-Negotiable)
+
+- This appendix documents **known adversarial attack vectors** and the
+  **planned or implemented V1.1 mitigations**.
+- **Nothing in this document constitutes a certified safety claim.**
+- **V1.1 MUST NOT be used** to support:
+  - V1.0.1 evaluation results
+  - arXiv claims
+  - gate advancement
+- Certification authority remains exclusively with the **frozen V1.0.1 stack**
+  until V1.1 passes a dedicated adversarial evaluation and is formally promoted.
+
+This appendix exists to **preserve institutional memory**, prevent regression,
+and guide future evaluation — not to advance gates.
+
+---
+
+## Why This Appendix Exists
+
+During V1 development, multiple adversarial reviews (internal, DeepSeek,
+Claude-assisted red-team exercises) identified **credible attack vectors**
+against:
+
+- parser and input handling
+- cumulative escalation patterns (“slow poison”)
+- symbolic target manipulation (safety defeat)
+- fail-open crash paths
+- timing and side-channel leakage
+
+V1.1 introduces **additive, boundary-only hardening** to address these risks
+*without modifying* the frozen V1.0.1 authority.
+
+This appendix:
+
+1. Records the attacks explicitly  
+2. Maps each attack to a **specific V1.1 mitigation**  
+3. States clearly what **is not solved** and why  
+
+---
+
+## Threat Boundary Reminder
+
+| Layer | Status |
+|---|---|
+| **V1.0.1 Core Validator** | Frozen, normative, certified authority |
+| **V1.1 Hardening** | Wrapper only, design-complete, untested |
+| **Planner / LLM** | Untrusted |
+| **Execution / Hardware** | Out of scope until G4 |
+
+**Out of Scope for V1.1 (Documented for V2+):**
+- supply-chain compromise
+- dependency poisoning
+- physical tamper resistance
+- canonical symbol ↔ physical grounding correctness
+- true constant-time guarantees
+- hardware fault injection
+
+---
+
+## Adversarial Threat Catalog
+
+### A1 — Unicode Confusables & Normalization Bypass
+
+**Threat:**  
+Use of combining characters, confusable glyphs, or Unicode tricks to hide
+dangerous substrings or evade symbolic checks.
+
+**Examples:**
+- combining marks embedded in identifiers
+- visually similar Unicode characters
+- zero-width joiners
+
+**V1.1 Mitigation:**  
+`InputHardener`
+- Unicode normalization (NFKC)
+- rejection of zero-width characters
+- rejection of control characters
+- bounded payload size
+
+**Residual Risk:**  
+Perfect semantic equivalence detection is not claimed.
+
+**Test Coverage:**  
+`test_unicode_combining_marks_*`
+
+---
+
+### A2 — Structural Complexity DoS (Deep Nesting)
+
+**Threat:**  
+Payload remains under size limits but uses extreme nesting to cause
+parser recursion, CPU exhaustion, or crashes.
+
+**Examples:**
+```json
+{"actions": [[[[[[{...}]]]]]]}
+
+V1.1 Mitigation:
+InputHardener
+	•	maximum payload size
+	•	maximum line count
+	•	(recommended) structural complexity checks
+	•	bracket balance
+	•	estimated nesting depth
+
+Residual Risk:
+Parser behavior remains implementation-dependent.
+
+Test Coverage:
+test_structural_complexity_* (design-planned)
 
 ⸻
 
-3. Scope Boundary Reminder
+A3 — Safety Target Obfuscation
 
-In Scope for V1.1
-	•	Input sanitization & parser hardening
-	•	Structural complexity resistance
-	•	Cumulative risk limits (single-plan)
-	•	Symbolic safety-target denial
-	•	Fail-closed behavior under unexpected input
-	•	Best-effort timing noise (non-normative)
+Threat:
+Bypass deny-lists using casing, punctuation, separators, or naming tricks to
+target safety-critical objects.
 
-Explicitly Out of Scope (Deferred to V2+)
-	•	Supply-chain compromise (dependencies, CI/CD)
-	•	Hardware tamper resistance
-	•	Symbol ↔ physical grounding correctness
-	•	Cross-plan cumulative state
-	•	Formal constant-time guarantees
-	•	Learning or adaptation
-
-No V1.1 mitigation should be interpreted as addressing out-of-scope threats.
-
-⸻
-
-4. Adversarial Threat Catalog
-
-A1 — Unicode Confusables / Normalization Bypass
-
-Threat Pattern
-Use combining characters, confusable glyphs, or invisible Unicode to hide:
-	•	dangerous substrings
-	•	forbidden targets
-	•	malicious structure
-
-Example
-Targets or payloads using combining marks to evade substring detection.
-
-Planned V1.1 Mitigation
-	•	Unicode normalization (NFKC)
-	•	Rejection of zero-width characters
-	•	Rejection of control characters
-	•	Optional structural checks pre-parse
-
-Required Test
-	•	Payloads containing combining marks must be vetoed deterministically.
-
-⸻
-
-A2 — Structural Complexity DoS (Deep Nesting)
-
-Threat Pattern
-Payload remains within size limits but uses extreme nesting to exhaust parser or CPU.
-
-Example
-
-{"actions": [[[[[[[{}]]]]]]]}
-
-Planned V1.1 Mitigation
-	•	Bracket balance enforcement
-	•	Maximum nesting depth limit in InputHardener
-
-Required Test
-	•	Deeply nested payload must veto cleanly without crash or hang.
-
-⸻
-
-A3 — Safety-Target Obfuscation
-
-Threat Pattern
-Bypass symbolic deny-lists using:
-	•	CamelCase
-	•	punctuation
-	•	separators
-	•	mixed casing
-
-Examples
-	•	EmergencySTOP
-	•	eStopButton
-	•	power-panel
+Examples:
+	•	EmergencySTOPButton
+	•	e-stop
 	•	safetyPin
+	•	power_panel
 
-Planned V1.1 Mitigation
-	•	Target canonicalization (lowercase, strip non-alphanumeric)
-	•	Deny exact + deny substring matching on normalized target
+V1.1 Mitigation:
+SafetyTargetValidator
+	•	deny exact identifiers
+	•	deny substrings (case-insensitive)
+	•	conservative symbolic blocking
 
-Required Test
-	•	All variants must be vetoed consistently.
+Residual Risk:
+No physical grounding; symbolic only.
+
+Test Coverage:
+test_safety_targets_are_vetoed
 
 ⸻
 
-A4 — Slow-Poison Cumulative Escalation
+A4 — Cumulative Escalation (“Slow Poison”)
 
-Threat Pattern
-Individually valid actions accumulate unsafe behavior within a single plan.
+Threat:
+Multiple individually-valid actions combine into unsafe behavior.
 
-Examples
-	•	Repeated low-force grasps
-	•	Excessive unique targets
-	•	Excessive total wait duration
+Patterns:
+	•	repeated low-force grasps
+	•	excessive target switching
+	•	prolonged waits / loitering
+	•	force-time accumulation
 
-Planned V1.1 Mitigation
-	•	CumulativeLimitsTracker (plan-local only)
-	•	max grasps
-	•	max force-time proxy
+V1.1 Mitigation:
+CumulativeLimitsTracker
+	•	max grasps per plan
+	•	force-time budget proxy
 	•	max unique targets
-	•	max total wait time
+	•	max total wait duration
 
-Required Test
-	•	Over-budget plans must veto.
-	•	Tracker must be stateless across validations.
+Residual Risk:
+No cross-plan or runtime telemetry in V1.x.
 
-⸻
-
-A5 — Malformed Character Attacks (Unicode Bombs / Null Bytes)
-
-Threat Pattern
-	•	Null bytes
-	•	Control characters
-	•	Pathological invisible characters
-	•	Excessive line counts
-
-Planned V1.1 Mitigation
-	•	Strict character rejection in InputHardener
-	•	Early veto before JSON parsing
-
-Required Test
-	•	Must veto cleanly and deterministically.
+Test Coverage:
+test_cumulative_*
 
 ⸻
 
-A6 — Fail-Open via Unexpected Exception
+A5 — Malformed Input & Crash Induction
 
-Threat Pattern
-Cause internal errors so validation crashes instead of vetoing.
+Threat:
+Null bytes, control characters, malformed JSON, oversized payloads intended
+to crash the validator or force fail-open behavior.
 
-Planned V1.1 Mitigation
-	•	Wrapper validator enforces fail-closed:
-	•	Any unexpected exception → GuardianViolation(G1_Internal_Error)
+V1.1 Mitigation:
+InputHardener + wrapper validator
+	•	strict type enforcement
+	•	null/control character rejection
+	•	bounded input
+	•	fail-closed exception handling
 
-Required Test
-	•	Malformed inputs must never crash the process.
+Residual Risk:
+Dependent on host runtime stability.
 
-⸻
-
-A7 — Timing / Side-Channel Inference (Awareness Only)
-
-Threat Pattern
-Infer which checks triggered by timing analysis.
-
-Planned V1.1 Mitigation
-	•	Optional timing jitter / padding (best-effort only)
-
-Status
-	•	Informational only
-	•	No formal constant-time claim
-	•	No gate credit
-
-Required Test
-	•	Demonstration only (non-assertive)
+Test Coverage:
+test_input_*, end-to-end fail-closed tests
 
 ⸻
 
-5. Required V1.1 Artifacts
+A6 — Fail-Open via Unexpected Exceptions
 
-Design Artifacts
+Threat:
+Trigger an internal exception so validation aborts without a veto.
+
+V1.1 Mitigation:
+GuardianValidatorV1_1
+	•	any unexpected exception → GuardianViolation
+	•	no crashes propagate to execution
+
+Residual Risk:
+None claimed; behavior verified only under tests.
+
+Test Coverage:
+test_wrapper_validator_fail_closed_*
+
+⸻
+
+A7 — Timing & Side-Channel Inference (Best-Effort Only)
+
+Threat:
+Attacker infers which checks triggered by measuring validation latency.
+
+V1.1 Mitigation:
+Optional timing obfuscation
+	•	minimum execution time
+	•	random jitter
+
+Explicit Limitation:
+This does NOT provide constant-time guarantees.
+
+True side-channel resistance requires:
+	•	fixed-budget execution
+	•	phase flattening
+	•	validator isolation
+	•	hardware enforcement (G4)
+
+Test Coverage:
+Informational timing tests only (non-certifying).
+
+⸻
+
+Required Artifacts
+
+Design (V1.1)
 	•	runtime/guardian_hardening_v1_1.py
 	•	runtime/guardian_validator_v1_1.py
 
-Test Artifacts (Not Yet Run)
+Tests (Design-Only)
 	•	tests/test_v1_1_hardening_attacks.py
 
 ⸻
 
-6. Gate Discipline (Non-Negotiable)
-	•	V1.1 must not be used to justify V1.0.1 results.
-	•	No safety claim may reference this appendix.
-	•	No gate advancement occurs until:
-	1.	Adversarial tests pass
-	2.	Results are documented
-	3.	Gates file is explicitly updated
+Gate Rule (Strict)
+	•	No gate advancement may reference this appendix.
+	•	No evaluation results may rely on V1.1 hardening.
+	•	V1.1 exists solely as a future safety improvement path.
 
-Until then, V1.1 remains design-only.
+Promotion beyond design status requires:
+	1.	Dedicated adversarial evaluation
+	2.	Documented results
+	3.	Explicit gate update
 
 ⸻
 
-7. Why This Matters
+Summary
 
-This appendix exists to support the long-term goal:
+V1.1 hardening addresses known, credible attack vectors at the system
+boundary while preserving the integrity of the frozen V1.0.1 authority.
 
-Autonomous systems that safely transform waste into comfort and dignity for life — without hidden authority, silent escalation, or unverified optimism.
+It improves robustness, raises attacker cost, and documents residual risk —
+without making claims it cannot prove.
 
-Documenting threats before deployment is how that goal remains credible.
-
+This appendix ensures those lessons are never lost.
