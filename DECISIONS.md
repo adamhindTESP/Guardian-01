@@ -126,6 +126,35 @@ Windows timeout hardening is explicitly deferred and documented.
 
 ---
 
+## Decision D-008: Non-Moral Framing of Safety Constraints
+
+**Decision:**  
+The Guardian system does not encode, infer, or reason about moral concepts
+such as harm, justice, deception, or ethical obligation.
+
+All safety enforcement is defined strictly in terms of:
+- execution constraints
+- symbolic validity
+- physical bounds
+- resource stewardship
+- deterministic veto rules
+
+**Rationale:**  
+Moral concepts are subjective, context-dependent, and non-computable.
+Encoding them would expand Guardian scope beyond verifiable enforcement
+and undermine determinism.
+
+**Consequence:**  
+Terms such as "harm" are treated as shorthand labels for constrained,
+measurable violations (e.g., forbidden targets, excess force, entropy waste),
+not as moral judgments.
+
+The Guardian enforces *what may execute*, not *what is right*.
+
+**Status:** Final
+
+---
+
 ## Change Control
 
 Any modification to a **Final** decision requires:
