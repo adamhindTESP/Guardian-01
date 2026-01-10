@@ -89,6 +89,35 @@ All planner outputs must conform to a fixed, versioned action schema.
 
 ⸻
 
+## Repository Scope & Certification Boundary
+
+This repository contains multiple classes of artifacts supporting
+research, training, experimentation, and future hardware integration.
+
+Only a strict subset of files participates in Guardian v1.0.1
+certification and safety claims.
+
+### Certification-Critical (Authority-Bearing)
+The following files and directories are normative for v1.0.1:
+
+- schema/guardian01_action_contract_v1.schema.json
+- runtime/guardian_validator.py
+- guardian_seed/guardian_semantic_normalized.json
+- trajectory_planner.py
+- safety_coordinator.py
+- tests/
+- evaluation/ (measurement only)
+
+All safety claims are bounded to these artifacts and verified gates
+as defined in GATES.md.
+
+### Non-Certifying Artifacts
+All other directories (e.g. training, hardware, docs, archive) are
+explicitly non-authoritative and do not participate in certification,
+execution authority, or safety claims.
+
+⸻
+
 Frozen Action Contract & Enforcement (Normative)
 
 All planner outputs are treated as untrusted proposals until validated.
