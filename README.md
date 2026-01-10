@@ -23,6 +23,19 @@ This repository provides a software-complete safety stack (G1–G3.5) suitable f
 This repository does not present a complete robot and makes no deployment claims.
 It demonstrates a frozen safety substrate and a measurable planner interface intended for downstream integration.
 
+Terminology Note
+
+Throughout this repository, the term “safety” is used in a strictly technical sense.
+
+“Safety” refers only to enforced execution constraints:
+• bounded force, speed, energy, and sequencing
+• deterministic veto conditions
+• auditable authority separation
+
+It does not refer to moral harm, ethical judgment, social outcomes, or downstream consequences.
+
+Guardian enforces what actions are physically and procedurally permitted — not what actions are morally right.
+
 ⸻
 
 Core Principle: Structural Separation of Authority
