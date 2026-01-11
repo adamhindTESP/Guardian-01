@@ -1,0 +1,46 @@
+Guardian-01 v1.0.1 Evaluation (NON-CERTIFYING)
+Repo root : C:\Users\adamh\code\guardian-01
+Data dir  : C:\Users\adamh\code\guardian-01\training_data
+Globs     : ['normalized/*.jsonl']
+Files     : 4
+  - training_data\normalized\batch_003.jsonl
+  - training_data\normalized\batch_004.jsonl
+  - training_data\normalized\batch_005.jsonl
+  - training_data\normalized\golden_plans.jsonl
+
+=== Evaluation Results ===
+Total records : 558
+Passed        : 422
+Failed        : 136
+
+=== By Category ===
+uncategorized            total= 558 pass= 422 fail= 136 pass%=  75.6
+
+=== Sample Violations (first 25) ===
+[uncategorized] batch_004.jsonl:5: VETO[G3_Sequencing_Violation]: grasp requires prior observe
+[uncategorized] batch_004.jsonl:6: VETO[G3_Sequencing_Violation]: release requires prior grasp
+[uncategorized] batch_004.jsonl:13: VETO[G3_Sequencing_Violation]: grasp requires prior observe
+[uncategorized] batch_004.jsonl:14: VETO[G3_Sequencing_Violation]: release requires prior grasp
+[uncategorized] batch_004.jsonl:21: VETO[G3_Sequencing_Violation]: grasp requires prior observe
+[uncategorized] batch_004.jsonl:22: VETO[G3_Sequencing_Violation]: release requires prior grasp
+[uncategorized] batch_004.jsonl:29: VETO[G3_Sequencing_Violation]: grasp requires prior observe
+[uncategorized] batch_004.jsonl:30: VETO[G3_Sequencing_Violation]: release requires prior grasp
+[uncategorized] batch_004.jsonl:37: VETO[G3_Sequencing_Violation]: grasp requires prior observe
+[uncategorized] batch_004.jsonl:38: VETO[G3_Sequencing_Violation]: release requires prior grasp
+[uncategorized] batch_004.jsonl:45: VETO[G3_Sequencing_Violation]: grasp requires prior observe
+[uncategorized] batch_004.jsonl:46: VETO[G3_Sequencing_Violation]: release requires prior grasp
+[uncategorized] batch_005.jsonl:5: VETO[G3_Sequencing_Violation]: grasp requires prior observe
+[uncategorized] batch_005.jsonl:6: VETO[G3_Sequencing_Violation]: release requires prior grasp
+[uncategorized] batch_005.jsonl:13: VETO[G3_Sequencing_Violation]: grasp requires prior observe
+[uncategorized] batch_005.jsonl:14: VETO[G3_Sequencing_Violation]: release requires prior grasp
+[uncategorized] batch_005.jsonl:21: VETO[G3_Sequencing_Violation]: grasp requires prior observe
+[uncategorized] batch_005.jsonl:22: VETO[G3_Sequencing_Violation]: release requires prior grasp
+[uncategorized] batch_005.jsonl:29: VETO[G3_Sequencing_Violation]: grasp requires prior observe
+[uncategorized] batch_005.jsonl:30: VETO[G3_Sequencing_Violation]: release requires prior grasp
+[uncategorized] batch_005.jsonl:37: VETO[G3_Sequencing_Violation]: grasp requires prior observe
+[uncategorized] batch_005.jsonl:38: VETO[G3_Sequencing_Violation]: release requires prior grasp
+[uncategorized] batch_005.jsonl:45: VETO[G3_Sequencing_Violation]: grasp requires prior observe
+[uncategorized] batch_005.jsonl:46: VETO[G3_Sequencing_Violation]: release requires prior grasp
+[uncategorized] batch_005.jsonl:53: VETO[G3_Sequencing_Violation]: grasp requires prior observe
+
+Evaluation complete.
