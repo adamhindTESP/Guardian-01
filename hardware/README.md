@@ -1,5 +1,37 @@
 G4 Hardware Governor — Guardian Architecture
 
+# ⚠️ Windows Users — Important Notice
+
+This repository contains hardware interface paths that are **valid on Linux/macOS**
+but **cannot be checked out on Windows NTFS** due to filesystem constraints.
+
+❌ Do NOT attempt a full checkout on Windows  
+❌ Do NOT rename or “fix” paths to satisfy Windows  
+❌ Do NOT commit path-case changes from Windows
+
+### Supported workflows
+
+- ✅ Linux
+- ✅ macOS
+- ✅ Windows with **sparse-checkout (recommended)**
+
+### Windows instructions (required)
+
+```bash
+git clone --no-checkout https://github.com/adamhindTESP/guardian-01.git
+cd guardian-01
+git sparse-checkout init --no-cone
+git sparse-checkout set \
+  /ARCHITECTURE.md \
+  /README.md \
+  /runtime \
+  /schema \
+  /spec \
+  /tests \
+  /training_data
+git checkout main
+```
+
 Independent, non-bypassable physical safety enforcement for LLM-driven systems
 
 ⸻
