@@ -2,7 +2,7 @@ import json
 from runtime.guardian_validator import GuardianValidator, GuardianViolation
 from pathlib import Path
 
-PLANS_PATH = Path("training_data/golden_plans.json")
+PLANS_PATH = Path("training_data/golden_plans.jsonl")
 
 def main():
     validator = GuardianValidator()
