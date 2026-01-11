@@ -8,7 +8,10 @@ def main():
     validator = GuardianValidator()
 
     with open(PLANS_PATH, "r") as f:
-        plans = json.load(f)
+        plans = []
+with open(PLANS_PATH, "r") as f:
+    for line in f:
+        plans.append(json.loads(line))
 
     results = []
 
