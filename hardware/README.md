@@ -1,5 +1,7 @@
 G4 Hardware Governor — Guardian Architecture
 
+Independent, non-bypassable physical safety enforcement for LLM-driven systems
+
 # ⚠️ Windows Users — Important Notice
 
 This repository contains hardware interface paths that are **valid on Linux/macOS**
@@ -31,8 +33,6 @@ git sparse-checkout set \
   /training_data
 git checkout main
 ```
-
-Independent, non-bypassable physical safety enforcement for LLM-driven systems
 
 ⸻
 
