@@ -89,6 +89,19 @@ All planner outputs must conform to a fixed, versioned action schema.
 
 ⸻
 
+## Windows Users — Read First ⚠
+
+This repository includes a `/hardware` directory that is **not fully compatible
+with Windows (NTFS)**.
+
+Windows users may see certain hardware files marked as deleted locally due to
+filesystem constraints. This is expected and **must not be committed**.
+
+See:
+- `hardware/README_WINDOWS.md` for details
+
+⸻
+
 ## Repository Scope & Certification Boundary
 
 This repository contains multiple classes of artifacts supporting
